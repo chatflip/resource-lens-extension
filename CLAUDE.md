@@ -19,9 +19,26 @@
 ## ビルド・開発
 
 - パッケージマネージャ: pnpm
-- ビルド・パッケージ化等のフローは **make を通して実行する**（`pnpm` / `npm` を直接使わない）
-  - `make build` / `make watch` / `make package` / `make clean`
+- **すべてのコマンドは make 経由で実行する**（`pnpm` / `npm` を直接叩かない）
 - `F5`でExtension Development Host起動
+
+| コマンド | 内容 |
+|---|---|
+| `make build` | ビルド |
+| `make watch` | ウォッチモード |
+| `make package` | vsix パッケージ生成 |
+| `make test` | ユニットテスト (vitest) |
+| `make lint` | ESLint |
+| `make format` | Prettier で整形 |
+| `make format-check` | Prettier 差分チェック |
+| `make clean` | dist / node_modules 削除 |
+
+## コード品質
+
+- **ESLint**: flat config (`eslint.config.mjs`)、`typescript-eslint` recommended
+- **Prettier**: singleQuote, trailingComma (`.prettierrc`)
+- **テスト**: vitest + `@vitest/coverage-v8`（設定: `config/vitest.config.ts`）
+- **CI**: GitHub Actions（lint → test w/ coverage → build）
 
 ## アーキテクチャ
 
@@ -36,7 +53,7 @@ extension.ts (エントリ: activate/deactivate + setIntervalループ)
 └── GpuCollector (nvidia-smiで検出)
 ```
 
-## ステータスバー表示形式（統一ルール）
+## ステータスバー表示形式
 
 | アイテム | 形式              | 例                        |
 | -------- | ----------------- | ------------------------- |
@@ -44,38 +61,26 @@ extension.ts (エントリ: activate/deactivate + setIntervalループ)
 | RAM      | `RAM x.x/x.x GB`  | `RAM 7.2/16.0 GB`         |
 | VRAM     | `VRAM x.x/x.x GB` | `VRAM 4.2/8.0 GB`         |
 
-- **アイコンなし**（テキストラベル+数値）
-- **CPU**: `toFixed(1).padStart(4)` で幅を揃える（小数点以下1桁、整数部が1桁のときスペース補填）
+- **CPU**: `toFixed(1).padStart(4)` で幅統一
 - **RAM/VRAM**: `使用量/総量 GB`（小数点以下1桁）。総量不明時は `x.x GB` のみ
-- **フリッカー抑制**: テキストが前回と同じ場合はステータスバーアイテムを更新しない
+- **フリッカー抑制**: テキストが前回と同じなら更新しない
 
 ## ツールチップ形式
 
 - ヘッダー（CPU/RAM/VRAM等）は表示しない
-- **CPU**: Model / Cores / Speed（静的情報のみ。Overall%は表示しない）
+- **CPU**: Model / Cores / Speed（静的情報のみ）
 - **RAM**: Total / Used / Free
 - **VRAM**: Name / Core Usage / VRAM詳細 / 温度（Vendorは表示しない）
-
-## 主要な仕様
-
-- **更新間隔**: ユーザー設定可能、デフォルト1秒（最小500ms）
-- **対応OS**: macOS, Windows, Linux
-- **ホバー**: MarkdownStringによるリッチツールチップ（テーブル+バーチャート）
-- **GPU**: 検出できた場合のみ表示、なければ非表示
-- **設定変更**: onDidChangeConfigurationでリアルタイム反映
 
 ## 設定項目 (contributes.configuration)
 
 - `resourceLens.updateIntervalMs` (number, default: 1000, min: 500)
-- `resourceLens.showCpu` (boolean, default: true)
-- `resourceLens.showMemory` (boolean, default: true)
-- `resourceLens.showGpu` (boolean, default: true)
+- `resourceLens.showCpu` / `showMemory` / `showGpu` (boolean, default: true)
 
 ## GPU検出
 
-- **NVIDIA のみ対応**
-- `nvidia-smi` で検出・取得（VRAM/温度/使用率）
-- 検出失敗時は GPU 表示を非表示
+- NVIDIA のみ対応（`nvidia-smi`）
+- 検出失敗時は非表示
 
 ## セキュリティ
 
