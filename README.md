@@ -1,5 +1,8 @@
 # Resource Lens
 
+[![CI](https://github.com/chatflip/resource-lens-extension/actions/workflows/ci.yml/badge.svg)](https://github.com/chatflip/resource-lens-extension/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/chatflip/resource-lens-extension)](LICENSE.txt)
+
 Shows CPU, memory, and GPU usage in the VS Code status bar.
 
 ![status bar example](https://raw.githubusercontent.com/chatflip/resource-lens-extension/main/images/statusbar.png)
@@ -31,7 +34,7 @@ code --install-extension resource-lens-0.0.1.vsix
 
   "resourceLens.showCpu": true,
   "resourceLens.showMemory": true,
-  "resourceLens.showGpu": true
+  "resourceLens.showGpu": true,
 }
 ```
 
@@ -46,7 +49,7 @@ To show CPU only:
 ```jsonc
 {
   "resourceLens.showMemory": false,
-  "resourceLens.showGpu": false
+  "resourceLens.showGpu": false,
 }
 ```
 
