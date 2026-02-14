@@ -9,8 +9,8 @@
 - ランタイム依存なし（devDependenciesのみ）
 
 ## ビルド・開発
-- パッケージマネージャ: pnpm推奨（このセッションはnpmで代用）
-- `npm run build` / `npm run watch`
+- パッケージマネージャ: pnpm
+- `pnpm run build` / `pnpm run watch`
 - `F5`でExtension Development Host起動
 
 ## アーキテクチャ
