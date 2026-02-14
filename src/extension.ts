@@ -56,6 +56,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           const cfg = vscode.workspace.getConfiguration("resourceLens");
           if (cfg.get<boolean>("showGpu", true)) {
             gpuAvailable = await detectGpu();
+          } else {
+            gpuAvailable = false;
           }
         }
 

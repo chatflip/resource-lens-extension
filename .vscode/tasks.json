@@ -3,14 +3,14 @@
   "tasks": [
     {
       "label": "build",
-      "type": "npm",
-      "script": "build",
+      "type": "shell",
+      "command": "make build",
       "problemMatcher": ["$tsc"]
     },
     {
       "label": "watch",
-      "type": "npm",
-      "script": "watch",
+      "type": "shell",
+      "command": "make watch",
       "isBackground": true,
       "problemMatcher": ["$tsc-watch"]
     }
