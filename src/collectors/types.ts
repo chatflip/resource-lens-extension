@@ -28,7 +28,7 @@ export interface MemoryInfo {
 export interface GpuInfo {
   /** GPU name/model */
   name: string;
-  /** GPU vendor (NVIDIA, Apple, AMD) */
+  /** GPU vendor */
   vendor: string;
   /** Core/GPU utilization percentage (0-100), null if unavailable */
   coreUsage: number | null;

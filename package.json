@@ -24,7 +24,7 @@
     "configuration": {
       "title": "Resource Lens",
       "properties": {
-        "resourceLens.updateInterval": {
+        "resourceLens.updateIntervalMs": {
           "type": "number",
           "default": 1000,
           "minimum": 500,

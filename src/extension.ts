@@ -29,7 +29,7 @@ function stopTimer(): void {
 
 function getInterval(): number {
   const config = vscode.workspace.getConfiguration("resourceLens");
-  const interval = config.get<number>("updateInterval", 1000);
+  const interval = config.get<number>("updateIntervalMs", 1000);
   return Math.max(500, interval);
 }
 

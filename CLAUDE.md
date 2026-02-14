@@ -10,7 +10,8 @@
 
 ## ビルド・開発
 - パッケージマネージャ: pnpm
-- `pnpm run build` / `pnpm run watch`
+- ビルド・パッケージ化等のフローは **make を通して実行する**（`pnpm` / `npm` を直接使わない）
+  - `make build` / `make watch` / `make package` / `make clean`
 - `F5`でExtension Development Host起動
 
 ## アーキテクチャ
@@ -22,7 +23,7 @@ extension.ts (エントリ: activate/deactivate + setIntervalループ)
 │   └── gpuItem: $(circuit-board) GPU: xx% (検出時のみ表示)
 ├── CpuCollector (os.cpus()差分計算、ステートフル)
 ├── collectMemory() (os.totalmem/freemem、ステートレス)
-└── GpuCollector (NVIDIA→Apple→AMD順で検出)
+└── GpuCollector (nvidia-smiで検出)
 ```
 
 ## 主要な仕様
@@ -34,15 +35,17 @@ extension.ts (エントリ: activate/deactivate + setIntervalループ)
 - **設定変更**: onDidChangeConfigurationでリアルタイム反映
 
 ## 設定項目 (contributes.configuration)
-- `resourceLens.updateInterval` (number, default: 1000, min: 500)
+
+- `resourceLens.updateIntervalMs` (number, default: 1000, min: 500)
 - `resourceLens.showCpu` (boolean, default: true)
 - `resourceLens.showMemory` (boolean, default: true)
 - `resourceLens.showGpu` (boolean, default: true)
 
-## GPU検出 (優先順位)
-1. NVIDIA: `nvidia-smi` (VRAM/温度/使用率取得可)
-2. macOS: `system_profiler SPDisplaysDataType` + `ioreg -c IOAccelerator`
-3. AMD: `rocm-smi` (VRAM/温度/使用率取得可)
+## GPU検出
+
+- **NVIDIA のみ対応**
+- `nvidia-smi` で検出・取得（VRAM/温度/使用率）
+- 検出失敗時は GPU 表示を非表示
 
 ## セキュリティ
 - `exec`ではなく`execFile`を使用（シェルインジェクション防止）
