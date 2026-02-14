@@ -1,21 +1,18 @@
 import * as vscode from 'vscode';
 import { CpuInfo, MemoryInfo, GpuInfo } from './collectors/types';
-import { buildCpuTooltip } from './tooltips/cpuTooltip';
-import { buildMemoryTooltip } from './tooltips/memoryTooltip';
-import { buildGpuTooltip } from './tooltips/gpuTooltip';
+import {
+  buildCpuTooltip,
+  buildMemoryTooltip,
+  buildGpuTooltip,
+} from './tooltips/tooltips';
 
 export class StatusBarManager {
   private cpuItem: vscode.StatusBarItem;
   private memItem: vscode.StatusBarItem;
   private gpuItem: vscode.StatusBarItem;
-
-  // Cache last displayed text to avoid re-rendering when value hasn't changed
-  private lastCpuText = '';
-  private lastMemText = '';
-  private lastGpuText = '';
+  private lastTexts = { cpu: '', mem: '', gpu: '' };
 
   constructor() {
-    // Higher priority = further left
     this.cpuItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left,
       -100,
@@ -30,6 +27,25 @@ export class StatusBarManager {
     );
   }
 
+  private updateItem(
+    item: vscode.StatusBarItem,
+    key: keyof typeof this.lastTexts,
+    text: string | null,
+    tooltip: vscode.MarkdownString | null,
+  ): void {
+    if (text !== null && tooltip !== null) {
+      if (text !== this.lastTexts[key]) {
+        item.text = text;
+        item.tooltip = tooltip;
+        this.lastTexts[key] = text;
+      }
+      item.show();
+    } else {
+      this.lastTexts[key] = '';
+      item.hide();
+    }
+  }
+
   update(
     cpu: CpuInfo | null,
     mem: MemoryInfo | null,
@@ -37,58 +53,40 @@ export class StatusBarManager {
   ): void {
     const config = vscode.workspace.getConfiguration('resourceLens');
 
-    // CPU
-    if (cpu && config.get<boolean>('showCpu', true)) {
-      const text = `CPU ${cpu.overall.toFixed(1).padStart(4)}%`;
-      if (text !== this.lastCpuText) {
-        this.cpuItem.text = text;
-        this.cpuItem.tooltip = buildCpuTooltip(cpu);
-        this.lastCpuText = text;
-      }
-      this.cpuItem.show();
-    } else {
-      this.lastCpuText = '';
-      this.cpuItem.hide();
-    }
+    this.updateItem(
+      this.cpuItem,
+      'cpu',
+      cpu && config.get<boolean>('showCpu', true)
+        ? `CPU ${cpu.overall.toFixed(1).padStart(4)}%`
+        : null,
+      cpu ? buildCpuTooltip(cpu) : null,
+    );
 
-    // RAM (used/total GB)
-    if (mem && config.get<boolean>('showMemory', true)) {
-      const usedGB = mem.usedBytes / 1024 / 1024 / 1024;
-      const totalGB = mem.totalBytes / 1024 / 1024 / 1024;
-      const text = `RAM ${usedGB.toFixed(1)}/${totalGB.toFixed(1)} GB`;
-      if (text !== this.lastMemText) {
-        this.memItem.text = text;
-        this.memItem.tooltip = buildMemoryTooltip(mem);
-        this.lastMemText = text;
-      }
-      this.memItem.show();
-    } else {
-      this.lastMemText = '';
-      this.memItem.hide();
-    }
+    this.updateItem(
+      this.memItem,
+      'mem',
+      mem && config.get<boolean>('showMemory', true)
+        ? `RAM ${(mem.usedBytes / 1024 / 1024 / 1024).toFixed(1)}/${(mem.totalBytes / 1024 / 1024 / 1024).toFixed(1)} GB`
+        : null,
+      mem ? buildMemoryTooltip(mem) : null,
+    );
 
-    // VRAM (used/total GB)
+    let gpuText: string | null = null;
     if (gpu && config.get<boolean>('showGpu', true)) {
-      let text: string;
       if (gpu.vramUsedMB !== null && gpu.vramTotalMB !== null) {
-        const usedGB = gpu.vramUsedMB / 1024;
-        const totalGB = gpu.vramTotalMB / 1024;
-        text = `VRAM ${usedGB.toFixed(1)}/${totalGB.toFixed(1)} GB`;
+        gpuText = `VRAM ${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`;
       } else if (gpu.vramUsedMB !== null) {
-        text = `VRAM ${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
+        gpuText = `VRAM ${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
       } else {
-        text = `VRAM N/A`;
+        gpuText = `VRAM N/A`;
       }
-      if (text !== this.lastGpuText) {
-        this.gpuItem.text = text;
-        this.gpuItem.tooltip = buildGpuTooltip(gpu);
-        this.lastGpuText = text;
-      }
-      this.gpuItem.show();
-    } else {
-      this.lastGpuText = '';
-      this.gpuItem.hide();
     }
+    this.updateItem(
+      this.gpuItem,
+      'gpu',
+      gpuText,
+      gpu ? buildGpuTooltip(gpu) : null,
+    );
   }
 
   dispose(): void {

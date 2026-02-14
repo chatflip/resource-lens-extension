@@ -119,9 +119,7 @@ src/
 │   ├── memoryCollector.ts
 │   └── gpuCollector.ts
 ├── tooltips/
-│   ├── cpuTooltip.ts
-│   ├── memoryTooltip.ts
-│   └── gpuTooltip.ts
+│   └── tooltips.ts
 └── utils/
     └── exec.ts
 ```

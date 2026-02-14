@@ -15,22 +15,18 @@ async function tick(): Promise<void> {
   statusBarManager?.update(cpu, mem, gpu);
 }
 
-function startTimer(intervalMs: number): void {
-  stopTimer();
-  timer = setInterval(tick, intervalMs);
-}
-
-function stopTimer(): void {
-  if (timer !== undefined) {
-    clearInterval(timer);
-    timer = undefined;
-  }
-}
-
 function getInterval(): number {
-  const config = vscode.workspace.getConfiguration('resourceLens');
-  const interval = config.get<number>('updateIntervalMs', 1000);
-  return Math.max(500, interval);
+  return Math.max(
+    500,
+    vscode.workspace
+      .getConfiguration('resourceLens')
+      .get<number>('updateIntervalMs', 1000),
+  );
+}
+
+function restartTimer(): void {
+  if (timer !== undefined) clearInterval(timer);
+  timer = setInterval(tick, getInterval());
 }
 
 export async function activate(
@@ -39,39 +35,38 @@ export async function activate(
   statusBarManager = new StatusBarManager();
   context.subscriptions.push({ dispose: () => statusBarManager?.dispose() });
 
-  // Detect GPU
   const config = vscode.workspace.getConfiguration('resourceLens');
   if (config.get<boolean>('showGpu', true)) {
     gpuAvailable = await detectGpu();
   }
 
-  // Initial tick then start interval
   await tick();
-  startTimer(getInterval());
+  restartTimer();
 
-  // React to configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(async (e) => {
       if (e.affectsConfiguration('resourceLens')) {
-        // Re-check GPU if the setting changed
         if (e.affectsConfiguration('resourceLens.showGpu')) {
           const cfg = vscode.workspace.getConfiguration('resourceLens');
-          if (cfg.get<boolean>('showGpu', true)) {
-            gpuAvailable = await detectGpu();
-          } else {
-            gpuAvailable = false;
-          }
+          gpuAvailable = cfg.get<boolean>('showGpu', true)
+            ? await detectGpu()
+            : false;
         }
-
-        // Restart timer with potentially new interval
-        startTimer(getInterval());
+        restartTimer();
       }
     }),
   );
 
-  context.subscriptions.push({ dispose: stopTimer });
+  context.subscriptions.push({
+    dispose: () => {
+      if (timer !== undefined) clearInterval(timer);
+    },
+  });
 }
 
 export function deactivate(): void {
-  stopTimer();
+  if (timer !== undefined) {
+    clearInterval(timer);
+    timer = undefined;
+  }
 }

@@ -20,7 +20,7 @@ export function collectCpu(): CpuInfo {
   const cpus = os.cpus();
   const currentTicks = snapshot();
 
-  let cores: { usage: number }[];
+  let cores: number[];
 
   if (previousTicks && previousTicks.length === currentTicks.length) {
     cores = currentTicks.map((cur, i) => {
@@ -29,11 +29,10 @@ export function collectCpu(): CpuInfo {
       const totalDelta = cur.total - prev.total;
       const usage =
         totalDelta === 0 ? 0 : ((totalDelta - idleDelta) / totalDelta) * 100;
-      return { usage: Math.round(usage * 10) / 10 };
+      return Math.round(usage * 10) / 10;
     });
   } else {
-    // First call: no delta available, report 0
-    cores = currentTicks.map(() => ({ usage: 0 }));
+    cores = currentTicks.map(() => 0);
   }
 
   previousTicks = currentTicks;
@@ -41,9 +40,8 @@ export function collectCpu(): CpuInfo {
   const overall =
     cores.length === 0
       ? 0
-      : Math.round(
-          (cores.reduce((sum, c) => sum + c.usage, 0) / cores.length) * 10,
-        ) / 10;
+      : Math.round((cores.reduce((sum, c) => sum + c, 0) / cores.length) * 10) /
+        10;
 
   return {
     overall,
