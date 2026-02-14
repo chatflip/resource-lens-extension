@@ -13,8 +13,17 @@
   "engines": {
     "vscode": "^1.85.0"
   },
+  "keywords": [
+    "cpu",
+    "memory",
+    "gpu",
+    "vram",
+    "system-monitor",
+    "nvidia"
+  ],
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
   ],
   "activationEvents": [
     "onStartupFinished"
