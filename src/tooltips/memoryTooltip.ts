@@ -19,7 +19,7 @@ export function buildMemoryTooltip(mem: MemoryInfo): vscode.MarkdownString {
   md.appendMarkdown(`| **Total** | ${formatGB(mem.totalBytes)} GB |\n`);
   md.appendMarkdown(`| **Used** | ${formatGB(mem.usedBytes)} GB |\n`);
   md.appendMarkdown(`| **Free** | ${formatGB(mem.freeBytes)} GB |\n`);
-  md.appendMarkdown(`| **Usage** | ${bar(mem.usagePercent)} ${mem.usagePercent}% |\n`);
+  md.appendMarkdown(`| **Usage** | ${bar(mem.usagePercent)} ${mem.usagePercent.toFixed(1)}% |\n`);
 
   return md;
 }

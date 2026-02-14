@@ -21,7 +21,7 @@ export class StatusBarManager {
 
     // CPU
     if (cpu && config.get<boolean>("showCpu", true)) {
-      this.cpuItem.text = `$(pulse) CPU: ${cpu.overall}%`;
+      this.cpuItem.text = `$(pulse) CPU: ${cpu.overall.toFixed(1).padStart(5)}%`;
       this.cpuItem.tooltip = buildCpuTooltip(cpu);
       this.cpuItem.show();
     } else {
@@ -30,7 +30,7 @@ export class StatusBarManager {
 
     // Memory
     if (mem && config.get<boolean>("showMemory", true)) {
-      this.memItem.text = `$(database) MEM: ${mem.usagePercent}%`;
+      this.memItem.text = `$(database) MEM: ${mem.usagePercent.toFixed(1).padStart(5)}%`;
       this.memItem.tooltip = buildMemoryTooltip(mem);
       this.memItem.show();
     } else {
@@ -40,9 +40,9 @@ export class StatusBarManager {
     // GPU
     if (gpu && config.get<boolean>("showGpu", true)) {
       const displayValue = gpu.coreUsage !== null
-        ? `${gpu.coreUsage}%`
+        ? `${gpu.coreUsage.toFixed(1).padStart(5)}%`
         : gpu.vramUsedMB !== null && gpu.vramTotalMB !== null
-          ? `${Math.round((gpu.vramUsedMB / gpu.vramTotalMB) * 100)}%`
+          ? `${((gpu.vramUsedMB / gpu.vramTotalMB) * 100).toFixed(1).padStart(5)}%`
           : "N/A";
       this.gpuItem.text = `$(circuit-board) GPU: ${displayValue}`;
       this.gpuItem.tooltip = buildGpuTooltip(gpu);

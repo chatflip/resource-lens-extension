@@ -16,14 +16,14 @@ export function buildGpuTooltip(gpu: GpuInfo): vscode.MarkdownString {
   md.appendMarkdown(`| **Vendor** | ${gpu.vendor} |\n`);
 
   if (gpu.coreUsage !== null) {
-    md.appendMarkdown(`| **Core Usage** | ${bar(gpu.coreUsage)} ${gpu.coreUsage}% |\n`);
+    md.appendMarkdown(`| **Core Usage** | ${bar(gpu.coreUsage)} ${gpu.coreUsage.toFixed(1)}% |\n`);
   }
 
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
-    const vramPercent = Math.round((gpu.vramUsedMB / gpu.vramTotalMB) * 1000) / 10;
+    const vramPercent = ((gpu.vramUsedMB / gpu.vramTotalMB) * 100);
     md.appendMarkdown(`| **VRAM Total** | ${gpu.vramTotalMB} MB |\n`);
     md.appendMarkdown(`| **VRAM Used** | ${gpu.vramUsedMB} MB |\n`);
-    md.appendMarkdown(`| **VRAM** | ${bar(vramPercent)} ${vramPercent}% |\n`);
+    md.appendMarkdown(`| **VRAM** | ${bar(vramPercent)} ${vramPercent.toFixed(1)}% |\n`);
   } else if (gpu.vramUsedMB !== null) {
     md.appendMarkdown(`| **VRAM Used** | ${gpu.vramUsedMB} MB |\n`);
   }
