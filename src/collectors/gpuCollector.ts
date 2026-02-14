@@ -21,9 +21,7 @@ async function collectNvidia(): Promise<GpuInfo> {
     vramTotalMB: parseFloat(parts[1]) || null,
     vramUsedMB: parseFloat(parts[2]) || null,
     temperatureC: parseFloat(parts[3]) || null,
-    coreUsage: Number.isNaN(parseFloat(parts[4]))
-      ? null
-      : parseFloat(parts[4]),
+    coreUsage: Number.isNaN(parseFloat(parts[4])) ? null : parseFloat(parts[4]),
   };
 }
 
