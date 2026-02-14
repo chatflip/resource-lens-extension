@@ -8,7 +8,18 @@
       "Bash(git rm:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(docker:*)"
+      "Bash(docker:*)",
+      "Write(.vscode/**)",
+      "Write(config/**)",
+      "Write(docker/**)",
+      "Write(src/**)",
+      "Edit(.gitignore)",
+      "Edit(.markdownlint.json)",
+      "Edit(.vscodeignore)",
+      "Edit(.esbuild.js)",
+      "Edit(package.json)",
+      "Edit(README.md)",
+      "Edit(tsconfig.json)"
     ],
     "deny": [
       "Bash(npm *)",
