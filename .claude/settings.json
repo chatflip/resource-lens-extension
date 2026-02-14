@@ -13,6 +13,7 @@
       "mcp__MCP_DOCKER__get_latest_release",
       "mcp__MCP_DOCKER__get_tag",
       "mcp__MCP_DOCKER__get_commit",
+      "mcp__MCP_DOCKER__list_tags",
       "Write(.vscode/**)",
       "Write(config/**)",
       "Write(docker/**)",
@@ -25,6 +26,6 @@
       "Edit(README.md)",
       "Edit(tsconfig.json)"
     ],
-    "deny": ["Bash(npm *)", "Bash(pnpm *)"]
+    "deny": ["Bash(npm *)", "Bash(pnpm *)", "Bash(git tag:*)"]
   }
 }
