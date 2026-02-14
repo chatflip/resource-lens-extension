@@ -22,16 +22,16 @@
 - **すべてのコマンドは make 経由で実行する**（`pnpm` / `npm` を直接叩かない）
 - `F5`でExtension Development Host起動
 
-| コマンド | 内容 |
-|---|---|
-| `make build` | ビルド |
-| `make watch` | ウォッチモード |
-| `make package` | vsix パッケージ生成 |
-| `make test` | ユニットテスト (vitest) |
-| `make lint` | ESLint |
-| `make format` | Prettier で整形 |
-| `make format-check` | Prettier 差分チェック |
-| `make clean` | dist / node_modules 削除 |
+| コマンド            | 内容                     |
+| ------------------- | ------------------------ |
+| `make build`        | ビルド                   |
+| `make watch`        | ウォッチモード           |
+| `make package`      | vsix パッケージ生成      |
+| `make test`         | ユニットテスト (vitest)  |
+| `make lint`         | ESLint                   |
+| `make format`       | Prettier で整形          |
+| `make format-check` | Prettier 差分チェック    |
+| `make clean`        | dist / node_modules 削除 |
 
 ## コード品質
 
