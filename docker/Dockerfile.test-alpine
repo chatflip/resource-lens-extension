@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+RUN npm install -g pnpm@10.29.3
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
+
+COPY tsconfig.json ./
+COPY config ./config
+COPY src ./src
+
+CMD ["pnpm", "run", "test:integration"]

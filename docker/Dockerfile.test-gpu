@@ -1,0 +1,18 @@
+FROM node:20-slim
+
+# Install mock nvidia-smi into PATH to simulate GPU presence
+COPY docker/mock-nvidia-smi /usr/local/bin/nvidia-smi
+RUN chmod +x /usr/local/bin/nvidia-smi
+
+RUN npm install -g pnpm@10.29.3
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
+
+COPY tsconfig.json ./
+COPY config ./config
+COPY src ./src
+
+CMD ["pnpm", "run", "test:gpu"]

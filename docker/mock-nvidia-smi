@@ -1,0 +1,11 @@
+#!/bin/sh
+# Mock nvidia-smi for GPU integration tests.
+# Returns fixed data matching what the real nvidia-smi would output.
+
+if echo "$*" | grep -q "memory.total"; then
+  # Full stats query: name, memory.total (MB), memory.used (MB), temperature (C), utilization (%)
+  printf "Mock RTX 3080, 10240, 4096, 65, 42\n"
+else
+  # Detection query: name only
+  printf "Mock RTX 3080\n"
+fi

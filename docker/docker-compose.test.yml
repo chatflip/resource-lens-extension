@@ -1,0 +1,20 @@
+name: resource-lens-tests
+
+services:
+  ubuntu-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test
+    container_name: resource-lens-ubuntu-test
+
+  alpine-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test-alpine
+    container_name: resource-lens-alpine-test
+
+  gpu-mock-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test-gpu
+    container_name: resource-lens-gpu-mock-test
