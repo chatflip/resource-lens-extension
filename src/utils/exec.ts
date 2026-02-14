@@ -10,12 +10,17 @@ export function execFileAsync(
   timeoutMs: number = 3000,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    execFile(command, args, { timeout: timeoutMs }, (error, stdout) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(stdout);
-      }
-    });
+    execFile(
+      command,
+      args,
+      { timeout: timeoutMs, maxBuffer: 64 * 1024 },
+      (error, stdout) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(stdout);
+        }
+      },
+    );
   });
 }

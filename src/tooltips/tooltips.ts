@@ -3,7 +3,7 @@ import { CpuInfo, MemoryInfo, GpuInfo } from '../collectors/types';
 
 function table(rows: [string, string][]): vscode.MarkdownString {
   const md = new vscode.MarkdownString();
-  md.isTrusted = true;
+  md.supportHtml = false;
   md.appendMarkdown('| | |\n|---|---|\n');
   for (const [k, v] of rows) md.appendMarkdown(`| **${k}** | ${v} |\n`);
   return md;
