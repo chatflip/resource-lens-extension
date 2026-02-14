@@ -15,7 +15,8 @@ describe('collectMemory integration', () => {
 
   it('usagePercent is consistent with byte values', () => {
     const result = collectMemory();
-    const expected = Math.round((result.usedBytes / result.totalBytes) * 1000) / 10;
+    const expected =
+      Math.round((result.usedBytes / result.totalBytes) * 1000) / 10;
 
     expect(result.usagePercent).toBe(expected);
   });

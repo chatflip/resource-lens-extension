@@ -1,4 +1,4 @@
-import { execFile } from "child_process";
+import { execFile } from 'child_process';
 
 /**
  * Promise wrapper around child_process.execFile with timeout.
@@ -7,7 +7,7 @@ import { execFile } from "child_process";
 export function execFileAsync(
   command: string,
   args: string[],
-  timeoutMs: number = 3000
+  timeoutMs: number = 3000,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     execFile(command, args, { timeout: timeoutMs }, (error, stdout) => {

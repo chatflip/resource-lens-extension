@@ -1,20 +1,23 @@
-import { GpuInfo } from "./types";
-import { execFileAsync } from "../utils/exec";
+import { GpuInfo } from './types';
+import { execFileAsync } from '../utils/exec';
 
 let detected: boolean | undefined;
 let lastGpuInfo: GpuInfo | null = null;
 
 async function collectNvidia(): Promise<GpuInfo> {
-  const output = await execFileAsync("nvidia-smi", [
-    "--query-gpu=name,memory.total,memory.used,temperature.gpu,utilization.gpu",
-    "--format=csv,noheader,nounits",
+  const output = await execFileAsync('nvidia-smi', [
+    '--query-gpu=name,memory.total,memory.used,temperature.gpu,utilization.gpu',
+    '--format=csv,noheader,nounits',
   ]);
 
-  const parts = output.trim().split(",").map((s) => s.trim());
+  const parts = output
+    .trim()
+    .split(',')
+    .map((s) => s.trim());
   // name, memory.total (MB), memory.used (MB), temperature (C), utilization (%)
   return {
-    name: parts[0] ?? "NVIDIA GPU",
-    vendor: "NVIDIA",
+    name: parts[0] ?? 'NVIDIA GPU',
+    vendor: 'NVIDIA',
     vramTotalMB: parseFloat(parts[1]) || null,
     vramUsedMB: parseFloat(parts[2]) || null,
     temperatureC: parseFloat(parts[3]) || null,
@@ -27,7 +30,11 @@ async function collectNvidia(): Promise<GpuInfo> {
  */
 export async function detectGpu(): Promise<boolean> {
   try {
-    await execFileAsync("nvidia-smi", ["--query-gpu=name", "--format=csv,noheader"], 2000);
+    await execFileAsync(
+      'nvidia-smi',
+      ['--query-gpu=name', '--format=csv,noheader'],
+      2000,
+    );
     detected = true;
   } catch {
     detected = false;

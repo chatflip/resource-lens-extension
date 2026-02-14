@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
-import { MemoryInfo } from "../collectors/types";
+import * as vscode from 'vscode';
+import { MemoryInfo } from '../collectors/types';
 
 function formatGB(bytes: number): string {
   return (bytes / 1024 / 1024 / 1024).toFixed(1);

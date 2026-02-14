@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
-import { CpuInfo } from "../collectors/types";
+import * as vscode from 'vscode';
+import { CpuInfo } from '../collectors/types';
 
 export function buildCpuTooltip(cpu: CpuInfo): vscode.MarkdownString {
   const md = new vscode.MarkdownString();

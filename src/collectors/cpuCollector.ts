@@ -1,5 +1,5 @@
-import * as os from "os";
-import { CpuInfo } from "./types";
+import * as os from 'os';
+import { CpuInfo } from './types';
 
 interface CpuTick {
   idle: number;
@@ -27,7 +27,8 @@ export function collectCpu(): CpuInfo {
       const prev = previousTicks![i];
       const idleDelta = cur.idle - prev.idle;
       const totalDelta = cur.total - prev.total;
-      const usage = totalDelta === 0 ? 0 : ((totalDelta - idleDelta) / totalDelta) * 100;
+      const usage =
+        totalDelta === 0 ? 0 : ((totalDelta - idleDelta) / totalDelta) * 100;
       return { usage: Math.round(usage * 10) / 10 };
     });
   } else {
@@ -40,12 +41,14 @@ export function collectCpu(): CpuInfo {
   const overall =
     cores.length === 0
       ? 0
-      : Math.round((cores.reduce((sum, c) => sum + c.usage, 0) / cores.length) * 10) / 10;
+      : Math.round(
+          (cores.reduce((sum, c) => sum + c.usage, 0) / cores.length) * 10,
+        ) / 10;
 
   return {
     overall,
     cores,
-    model: cpus[0]?.model ?? "Unknown",
+    model: cpus[0]?.model ?? 'Unknown',
     speedMHz: cpus[0]?.speed ?? 0,
   };
 }

@@ -16,7 +16,7 @@ describe('detectGpu', () => {
     expect(mockExec).toHaveBeenCalledWith(
       'nvidia-smi',
       ['--query-gpu=name', '--format=csv,noheader'],
-      2000
+      2000,
     );
   });
 
@@ -47,9 +47,10 @@ describe('collectGpu', () => {
   });
 
   it('parses nvidia-smi output correctly', async () => {
-    const mockExec = vi.fn()
-      .mockResolvedValueOnce('NVIDIA RTX 3080')                             // detectGpu
-      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42');      // collectNvidia
+    const mockExec = vi
+      .fn()
+      .mockResolvedValueOnce('NVIDIA RTX 3080') // detectGpu
+      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42'); // collectNvidia
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
     const { collectGpu } = await import('./gpuCollector');
@@ -65,10 +66,11 @@ describe('collectGpu', () => {
   });
 
   it('returns last successful reading when collection fails', async () => {
-    const mockExec = vi.fn()
-      .mockResolvedValueOnce('NVIDIA RTX 3080')                            // detectGpu
-      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42')      // first collect succeeds
-      .mockRejectedValueOnce(new Error('nvidia-smi timeout'));             // second collect fails
+    const mockExec = vi
+      .fn()
+      .mockResolvedValueOnce('NVIDIA RTX 3080') // detectGpu
+      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42') // first collect succeeds
+      .mockRejectedValueOnce(new Error('nvidia-smi timeout')); // second collect fails
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
     const { collectGpu } = await import('./gpuCollector');
@@ -81,9 +83,10 @@ describe('collectGpu', () => {
   });
 
   it('returns null when first collection fails with no previous reading', async () => {
-    const mockExec = vi.fn()
-      .mockResolvedValueOnce('NVIDIA RTX 3080')                            // detectGpu succeeds
-      .mockRejectedValueOnce(new Error('timeout'));                        // collect fails
+    const mockExec = vi
+      .fn()
+      .mockResolvedValueOnce('NVIDIA RTX 3080') // detectGpu succeeds
+      .mockRejectedValueOnce(new Error('timeout')); // collect fails
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
     const { collectGpu } = await import('./gpuCollector');
@@ -93,9 +96,10 @@ describe('collectGpu', () => {
   });
 
   it('auto-detects GPU when called without prior detectGpu()', async () => {
-    const mockExec = vi.fn()
-      .mockResolvedValueOnce('NVIDIA RTX 3080')                            // auto-detect
-      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42');     // collect
+    const mockExec = vi
+      .fn()
+      .mockResolvedValueOnce('NVIDIA RTX 3080') // auto-detect
+      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42'); // collect
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
     const { collectGpu } = await import('./gpuCollector');

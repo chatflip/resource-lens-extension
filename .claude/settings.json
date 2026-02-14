@@ -21,9 +21,6 @@
       "Edit(README.md)",
       "Edit(tsconfig.json)"
     ],
-    "deny": [
-      "Bash(npm *)",
-      "Bash(pnpm *)"
-    ]
+    "deny": ["Bash(npm *)", "Bash(pnpm *)"]
   }
 }

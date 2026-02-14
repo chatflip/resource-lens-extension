@@ -1,5 +1,5 @@
-import * as os from "os";
-import { MemoryInfo } from "./types";
+import * as os from 'os';
+import { MemoryInfo } from './types';
 
 export function collectMemory(): MemoryInfo {
   const totalBytes = os.totalmem();

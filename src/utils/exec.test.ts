@@ -9,13 +9,13 @@ describe('execFileAsync', () => {
 
   it('rejects on non-zero exit code', async () => {
     await expect(
-      execFileAsync('node', ['-e', 'process.exit(1)'])
+      execFileAsync('node', ['-e', 'process.exit(1)']),
     ).rejects.toThrow();
   });
 
   it('rejects when command exceeds timeout', async () => {
     await expect(
-      execFileAsync('node', ['-e', 'setTimeout(()=>{}, 10000)'], 200)
+      execFileAsync('node', ['-e', 'setTimeout(()=>{}, 10000)'], 200),
     ).rejects.toThrow();
   }, 3000);
 });

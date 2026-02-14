@@ -8,7 +8,13 @@ type MockCpu = {
 };
 
 function makeCpuData(user: number, idle: number): MockCpu[] {
-  return [{ model: 'Intel Core i7', speed: 2400, times: { user, nice: 0, sys: 0, idle, irq: 0 } }];
+  return [
+    {
+      model: 'Intel Core i7',
+      speed: 2400,
+      times: { user, nice: 0, sys: 0, idle, irq: 0 },
+    },
+  ];
 }
 
 describe('collectCpu', () => {
@@ -63,8 +69,16 @@ describe('collectCpu', () => {
 
   it('averages overall across multiple cores', async () => {
     const mockCpus = vi.fn(() => [
-      { model: 'Intel Core i7', speed: 2400, times: { user: 100, nice: 0, sys: 0, idle: 900, irq: 0 } },
-      { model: 'Intel Core i7', speed: 2400, times: { user: 500, nice: 0, sys: 0, idle: 500, irq: 0 } },
+      {
+        model: 'Intel Core i7',
+        speed: 2400,
+        times: { user: 100, nice: 0, sys: 0, idle: 900, irq: 0 },
+      },
+      {
+        model: 'Intel Core i7',
+        speed: 2400,
+        times: { user: 500, nice: 0, sys: 0, idle: 500, irq: 0 },
+      },
     ]);
     vi.doMock('os', () => ({ cpus: mockCpus }));
 
@@ -72,8 +86,16 @@ describe('collectCpu', () => {
     collectCpu(); // first call
 
     mockCpus.mockReturnValue([
-      { model: 'Intel Core i7', speed: 2400, times: { user: 200, nice: 0, sys: 0, idle: 1800, irq: 0 } },
-      { model: 'Intel Core i7', speed: 2400, times: { user: 600, nice: 0, sys: 0, idle: 1400, irq: 0 } },
+      {
+        model: 'Intel Core i7',
+        speed: 2400,
+        times: { user: 200, nice: 0, sys: 0, idle: 1800, irq: 0 },
+      },
+      {
+        model: 'Intel Core i7',
+        speed: 2400,
+        times: { user: 600, nice: 0, sys: 0, idle: 1400, irq: 0 },
+      },
     ]);
     // core0: delta_active=100, delta_total=1000 → 10%
     // core1: delta_active=100, delta_total=1000 → 10%

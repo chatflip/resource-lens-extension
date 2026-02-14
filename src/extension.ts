@@ -1,8 +1,8 @@
-import * as vscode from "vscode";
-import { StatusBarManager } from "./statusBar";
-import { collectCpu } from "./collectors/cpuCollector";
-import { collectMemory } from "./collectors/memoryCollector";
-import { detectGpu, collectGpu } from "./collectors/gpuCollector";
+import * as vscode from 'vscode';
+import { StatusBarManager } from './statusBar';
+import { collectCpu } from './collectors/cpuCollector';
+import { collectMemory } from './collectors/memoryCollector';
+import { detectGpu, collectGpu } from './collectors/gpuCollector';
 
 let statusBarManager: StatusBarManager | undefined;
 let timer: ReturnType<typeof setInterval> | undefined;
@@ -28,18 +28,20 @@ function stopTimer(): void {
 }
 
 function getInterval(): number {
-  const config = vscode.workspace.getConfiguration("resourceLens");
-  const interval = config.get<number>("updateIntervalMs", 1000);
+  const config = vscode.workspace.getConfiguration('resourceLens');
+  const interval = config.get<number>('updateIntervalMs', 1000);
   return Math.max(500, interval);
 }
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+export async function activate(
+  context: vscode.ExtensionContext,
+): Promise<void> {
   statusBarManager = new StatusBarManager();
   context.subscriptions.push({ dispose: () => statusBarManager?.dispose() });
 
   // Detect GPU
-  const config = vscode.workspace.getConfiguration("resourceLens");
-  if (config.get<boolean>("showGpu", true)) {
+  const config = vscode.workspace.getConfiguration('resourceLens');
+  if (config.get<boolean>('showGpu', true)) {
     gpuAvailable = await detectGpu();
   }
 
@@ -50,11 +52,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // React to configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(async (e) => {
-      if (e.affectsConfiguration("resourceLens")) {
+      if (e.affectsConfiguration('resourceLens')) {
         // Re-check GPU if the setting changed
-        if (e.affectsConfiguration("resourceLens.showGpu")) {
-          const cfg = vscode.workspace.getConfiguration("resourceLens");
-          if (cfg.get<boolean>("showGpu", true)) {
+        if (e.affectsConfiguration('resourceLens.showGpu')) {
+          const cfg = vscode.workspace.getConfiguration('resourceLens');
+          if (cfg.get<boolean>('showGpu', true)) {
             gpuAvailable = await detectGpu();
           } else {
             gpuAvailable = false;
@@ -64,7 +66,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         // Restart timer with potentially new interval
         startTimer(getInterval());
       }
-    })
+    }),
   );
 
   context.subscriptions.push({ dispose: stopTimer });

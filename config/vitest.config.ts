@@ -9,5 +9,11 @@ export default defineConfig({
       '**/dist/**',
       'src/**/*.integration.test.ts',
     ],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.integration.test.ts'],
+    },
   },
 });

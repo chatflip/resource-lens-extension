@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
-import { GpuInfo } from "../collectors/types";
+import * as vscode from 'vscode';
+import { GpuInfo } from '../collectors/types';
 
 export function buildGpuTooltip(gpu: GpuInfo): vscode.MarkdownString {
   const md = new vscode.MarkdownString();
@@ -13,9 +13,13 @@ export function buildGpuTooltip(gpu: GpuInfo): vscode.MarkdownString {
   }
 
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
-    md.appendMarkdown(`| **VRAM** | ${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB |\n`);
+    md.appendMarkdown(
+      `| **VRAM** | ${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB |\n`,
+    );
   } else if (gpu.vramUsedMB !== null) {
-    md.appendMarkdown(`| **VRAM Used** | ${(gpu.vramUsedMB / 1024).toFixed(1)} GB |\n`);
+    md.appendMarkdown(
+      `| **VRAM Used** | ${(gpu.vramUsedMB / 1024).toFixed(1)} GB |\n`,
+    );
   }
 
   if (gpu.temperatureC !== null) {
