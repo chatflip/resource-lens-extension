@@ -1,4 +1,4 @@
-.PHONY: install build watch package clean test test-docker test-all
+.PHONY: install build watch package clean test test-docker test-all lint format format-check
 
 install:
 	pnpm install
@@ -23,5 +23,14 @@ test-docker:
 	docker compose -f docker/docker-compose.test.yml run --rm ubuntu-test
 	docker compose -f docker/docker-compose.test.yml run --rm alpine-test
 	docker compose -f docker/docker-compose.test.yml run --rm gpu-mock-test
+
+lint: install
+	pnpm exec eslint .
+
+format: install
+	pnpm exec prettier --write .
+
+format-check: install
+	pnpm exec prettier --check .
 
 test-all: test test-docker
