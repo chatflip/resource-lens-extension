@@ -9,7 +9,6 @@ export function buildMemoryTooltip(mem: MemoryInfo): vscode.MarkdownString {
   const md = new vscode.MarkdownString();
   md.isTrusted = true;
 
-  md.appendMarkdown(`### RAM\n\n`);
   md.appendMarkdown(`| | |\n|---|---|\n`);
   md.appendMarkdown(`| **Total** | ${formatGB(mem.totalBytes)} GB |\n`);
   md.appendMarkdown(`| **Used** | ${formatGB(mem.usedBytes)} GB |\n`);

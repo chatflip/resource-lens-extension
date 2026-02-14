@@ -5,10 +5,8 @@ export function buildGpuTooltip(gpu: GpuInfo): vscode.MarkdownString {
   const md = new vscode.MarkdownString();
   md.isTrusted = true;
 
-  md.appendMarkdown(`### GPU\n\n`);
   md.appendMarkdown(`| | |\n|---|---|\n`);
   md.appendMarkdown(`| **Name** | ${gpu.name} |\n`);
-  md.appendMarkdown(`| **Vendor** | ${gpu.vendor} |\n`);
 
   if (gpu.coreUsage !== null) {
     md.appendMarkdown(`| **Core Usage** | ${gpu.coreUsage.toFixed(1)}% |\n`);
