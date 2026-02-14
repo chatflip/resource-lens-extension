@@ -1,6 +1,6 @@
 # Resource Lens
 
-[![CI](https://github.com/chatflip/resource-lens-extension/actions/workflows/ci.yml/badge.svg)](https://github.com/chatflip/resource-lens-extension/actions/workflows/ci.yml)
+[![CI](https://github.com/chatflip/resource-lens-extension/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/chatflip/resource-lens-extension/actions/workflows/ci.yml?query=branch%3Amain)
 [![License](https://img.shields.io/github/license/chatflip/resource-lens-extension)](LICENSE.txt)
 
 Shows CPU, memory, and GPU usage in the VS Code status bar.
