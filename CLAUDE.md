@@ -91,14 +91,14 @@ extension.ts (エントリ: activate/deactivate + setIntervalループ)
 
 以下は人間が行う。Claude はタグ作成・プッシュを実行しないこと。
 
-1. `package.json` の `version` を更新してコミット
-2. `git tag v<version>`（例: `git tag v0.1.0`）
-3. `git push origin v<version>`
+1. `git tag v<version>`（例: `git tag v0.1.0`）
+2. `git push origin v<version>`
 
 タグプッシュで GitHub Actions（`.github/workflows/release.yml`）が自動実行される:
 
+- タグからバージョンを読み取り `package.json` を自動更新してビルド
 - lint + test → Marketplace 公開 + GitHub Release 作成
-- タグと `package.json` の version 不一致時は失敗する
+- `package.json` の `version` は `0.0.0` 固定（手動更新不要）
 - **Secret**: リポジトリに `VSCE_PAT`（Azure DevOps PAT）の設定が必要
 
 ## GitHub Actions

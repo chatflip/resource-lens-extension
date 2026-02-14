@@ -45,14 +45,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      - name: Verify tag matches package.json version
+      - name: Set version from tag
         run: |
-          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
-            echo "::error::Tag v$TAG_VERSION does not match package.json version $PKG_VERSION"
-            exit 1
-          fi
+          git fetch --tags
+          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          pnpm pkg set version="$VERSION"
 
       - name: Build and package
         run: make package
