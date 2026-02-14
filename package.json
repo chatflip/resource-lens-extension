@@ -43,7 +43,7 @@
         "resourceLens.showGpu": {
           "type": "boolean",
           "default": true,
-          "description": "Show GPU usage in the status bar (if available)"
+          "description": "Show VRAM usage in the status bar (if available)"
         }
       }
     }

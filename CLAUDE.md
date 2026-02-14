@@ -36,20 +36,21 @@ extension.ts (エントリ: activate/deactivate + setIntervalループ)
 
 | アイテム | 形式 | 例 |
 |---|---|---|
-| CPU | `xx.x%` | ` 9.5%` / `45.3%` |
-| RAM | `x.x/x.x GB` | `7.2/16.0 GB` |
-| VRAM | `x.x/x.x GB` | `4.2/8.0 GB` |
+| CPU | `CPU xx.x%` | `CPU  9.5%` / `CPU 45.3%` |
+| RAM | `RAM x.x/x.x GB` | `RAM 7.2/16.0 GB` |
+| VRAM | `VRAM x.x/x.x GB` | `VRAM 4.2/8.0 GB` |
 
-- **アイコンなし・テキストラベルなし**（数値のみ）
+- **アイコンなし**（テキストラベル+数値）
 - **CPU**: `toFixed(1).padStart(4)` で幅を揃える（小数点以下1桁、整数部が1桁のときスペース補填）
 - **RAM/VRAM**: `使用量/総量 GB`（小数点以下1桁）。総量不明時は `x.x GB` のみ
 - **フリッカー抑制**: テキストが前回と同じ場合はステータスバーアイテムを更新しない
 
 ## ツールチップ形式
 
+- ヘッダー（CPU/RAM/VRAM等）は表示しない
 - **CPU**: Model / Cores / Speed（静的情報のみ。Overall%は表示しない）
-- **RAM**: Total / Used / Free / Usage%バーチャート。ヘッダーは「RAM」
-- **VRAM**: Name / Vendor / Core Usage / VRAM詳細 / 温度
+- **RAM**: Total / Used / Free
+- **VRAM**: Name / Core Usage / VRAM詳細 / 温度（Vendorは表示しない）
 
 ## 主要な仕様
 - **更新間隔**: ユーザー設定可能、デフォルト1秒（最小500ms）
