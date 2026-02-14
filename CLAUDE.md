@@ -18,18 +18,36 @@
 ```
 extension.ts (エントリ: activate/deactivate + setIntervalループ)
 ├── StatusBarManager (ステータスバー3アイテム管理)
-│   ├── cpuItem: $(pulse) CPU: xx%
-│   ├── memItem: $(database) MEM: xx%
-│   └── gpuItem: $(circuit-board) GPU: xx% (検出時のみ表示)
+│   ├── cpuItem:  xx.x%
+│   ├── memItem: xx.x/xx.x GB
+│   └── gpuItem: xx.x/xx.x GB (検出時のみ表示)
 ├── CpuCollector (os.cpus()差分計算、ステートフル)
 ├── collectMemory() (os.totalmem/freemem、ステートレス)
 └── GpuCollector (nvidia-smiで検出)
 ```
 
+## ステータスバー表示形式（統一ルール）
+
+| アイテム | 形式 | 例 |
+|---|---|---|
+| CPU | `xx.x%` | ` 9.5%` / `45.3%` |
+| RAM | `x.x/x.x GB` | `7.2/16.0 GB` |
+| VRAM | `x.x/x.x GB` | `4.2/8.0 GB` |
+
+- **アイコンなし・テキストラベルなし**（数値のみ）
+- **CPU**: `toFixed(1).padStart(4)` で幅を揃える（小数点以下1桁、整数部が1桁のときスペース補填）
+- **RAM/VRAM**: `使用量/総量 GB`（小数点以下1桁）。総量不明時は `x.x GB` のみ
+- **フリッカー抑制**: テキストが前回と同じ場合はステータスバーアイテムを更新しない
+
+## ツールチップ形式
+
+- **CPU**: Model / Cores / Speed（静的情報のみ。Overall%は表示しない）
+- **RAM**: Total / Used / Free / Usage%バーチャート。ヘッダーは「RAM」
+- **VRAM**: Name / Vendor / Core Usage / VRAM詳細 / 温度
+
 ## 主要な仕様
 - **更新間隔**: ユーザー設定可能、デフォルト1秒（最小500ms）
 - **対応OS**: macOS, Windows, Linux
-- **表示形式**: `$(icon) ラベル: 数値%`
 - **ホバー**: MarkdownStringによるリッチツールチップ（テーブル+バーチャート）
 - **GPU**: 検出できた場合のみ表示、なければ非表示
 - **設定変更**: onDidChangeConfigurationでリアルタイム反映

@@ -9,6 +9,11 @@ export class StatusBarManager {
   private memItem: vscode.StatusBarItem;
   private gpuItem: vscode.StatusBarItem;
 
+  // Cache last displayed text to avoid re-rendering when value hasn't changed
+  private lastCpuText = "";
+  private lastMemText = "";
+  private lastGpuText = "";
+
   constructor() {
     // Higher priority = further left
     this.cpuItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
@@ -21,33 +26,54 @@ export class StatusBarManager {
 
     // CPU
     if (cpu && config.get<boolean>("showCpu", true)) {
-      this.cpuItem.text = `$(pulse) CPU: ${cpu.overall.toFixed(1).padStart(5)}%`;
-      this.cpuItem.tooltip = buildCpuTooltip(cpu);
+      const text = `${cpu.overall.toFixed(1).padStart(4)}%`;
+      if (text !== this.lastCpuText) {
+        this.cpuItem.text = text;
+        this.cpuItem.tooltip = buildCpuTooltip(cpu);
+        this.lastCpuText = text;
+      }
       this.cpuItem.show();
     } else {
+      this.lastCpuText = "";
       this.cpuItem.hide();
     }
 
-    // Memory
+    // RAM (used/total GB)
     if (mem && config.get<boolean>("showMemory", true)) {
-      this.memItem.text = `$(database) MEM: ${mem.usagePercent.toFixed(1).padStart(5)}%`;
-      this.memItem.tooltip = buildMemoryTooltip(mem);
+      const usedGB = mem.usedBytes / 1024 / 1024 / 1024;
+      const totalGB = mem.totalBytes / 1024 / 1024 / 1024;
+      const text = `${usedGB.toFixed(1)}/${totalGB.toFixed(1)} GB`;
+      if (text !== this.lastMemText) {
+        this.memItem.text = text;
+        this.memItem.tooltip = buildMemoryTooltip(mem);
+        this.lastMemText = text;
+      }
       this.memItem.show();
     } else {
+      this.lastMemText = "";
       this.memItem.hide();
     }
 
-    // GPU
+    // VRAM (used/total GB)
     if (gpu && config.get<boolean>("showGpu", true)) {
-      const displayValue = gpu.coreUsage !== null
-        ? `${gpu.coreUsage.toFixed(1).padStart(5)}%`
-        : gpu.vramUsedMB !== null && gpu.vramTotalMB !== null
-          ? `${((gpu.vramUsedMB / gpu.vramTotalMB) * 100).toFixed(1).padStart(5)}%`
-          : "N/A";
-      this.gpuItem.text = `$(circuit-board) GPU: ${displayValue}`;
-      this.gpuItem.tooltip = buildGpuTooltip(gpu);
+      let text: string;
+      if (gpu.vramUsedMB !== null && gpu.vramTotalMB !== null) {
+        const usedGB = gpu.vramUsedMB / 1024;
+        const totalGB = gpu.vramTotalMB / 1024;
+        text = `${usedGB.toFixed(1)}/${totalGB.toFixed(1)} GB`;
+      } else if (gpu.vramUsedMB !== null) {
+        text = `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
+      } else {
+        text = `N/A`;
+      }
+      if (text !== this.lastGpuText) {
+        this.gpuItem.text = text;
+        this.gpuItem.tooltip = buildGpuTooltip(gpu);
+        this.lastGpuText = text;
+      }
       this.gpuItem.show();
     } else {
+      this.lastGpuText = "";
       this.gpuItem.hide();
     }
   }
