@@ -1,0 +1,57 @@
+{
+  "name": "resource-lens",
+  "displayName": "Resource Lens",
+  "description": "Display CPU, Memory, and GPU usage in the VS Code status bar",
+  "version": "0.1.0",
+  "publisher": "kazu",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Resource Lens",
+      "properties": {
+        "resourceLens.updateInterval": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 500,
+          "description": "Update interval in milliseconds (minimum 500ms)"
+        },
+        "resourceLens.showCpu": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show CPU usage in the status bar"
+        },
+        "resourceLens.showMemory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show memory usage in the status bar"
+        },
+        "resourceLens.showGpu": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show GPU usage in the status bar (if available)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.3.0"
+  }
+}
