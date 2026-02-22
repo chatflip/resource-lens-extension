@@ -7,8 +7,8 @@ Shows CPU, memory, and GPU usage in the VS Code status bar.
 
 ![status bar example](https://raw.githubusercontent.com/chatflip/resource-lens-extension/main/images/statusbar.png)
 
-Hover over any item for a detailed tooltip with a bar chart and extra stats
-like VRAM usage and GPU temperature.
+Hover over any item for a tooltip with CPU model, memory breakdown, and GPU
+temperature.
 
 ## GPU support
 
@@ -19,11 +19,7 @@ Tested on Docker (Linux) with an RTX 2080 Ti.
 
 ## Install
 
-Search for **Resource Lens** in the Extensions panel, or:
-
-```bash
-code --install-extension resource-lens-0.0.1.vsix
-```
+Search for **Resource Lens** in the Extensions panel.
 
 ## Settings
 
