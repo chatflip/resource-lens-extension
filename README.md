@@ -51,7 +51,7 @@ To show CPU only:
 
 ## Known issues
 
-- Tooltips may dismiss briefly while values update. This is a
+- Tooltip content may flicker or briefly disappear while values update. This is a
   [VS Code limitation](https://github.com/microsoft/vscode/issues/128887) and
   not specific to this extension.
 
