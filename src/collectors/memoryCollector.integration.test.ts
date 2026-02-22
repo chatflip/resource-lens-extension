@@ -10,10 +10,4 @@ describe('collectMemory integration', () => {
     expect(result.freeBytes).toBeGreaterThanOrEqual(0);
     expect(result.usedBytes + result.freeBytes).toBe(result.totalBytes);
   });
-
-  it('usedBytes + freeBytes equals totalBytes', () => {
-    const result = collectMemory();
-
-    expect(result.usedBytes + result.freeBytes).toBe(result.totalBytes);
-  });
 });
