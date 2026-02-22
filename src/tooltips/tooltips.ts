@@ -7,40 +7,52 @@ function table(rows: [string, string][]): string {
 }
 
 function formatGB(bytes: number): string {
-  return (bytes / 1024 / 1024 / 1024).toFixed(1);
+  return (bytes / 1024 / 1024 / 1024).toFixed(1).padStart(5);
+}
+
+function code(s: string): string {
+  return `\`${s}\``;
 }
 
 export function buildCpuTooltip(cpu: CpuInfo): string {
   return table([
     ['Model', cpu.model],
     ['Cores', String(cpu.cores.length)],
-    ['Speed', `${cpu.speedMHz} MHz`],
+    ['Speed', code(String(cpu.speedMHz).padStart(4) + ' MHz')],
   ]);
 }
 
 export function buildMemoryTooltip(mem: MemoryInfo): string {
   return table([
-    ['Total', `${formatGB(mem.totalBytes)} GB`],
-    ['Used', `${formatGB(mem.usedBytes)} GB`],
-    ['Free', `${formatGB(mem.freeBytes)} GB`],
+    ['Total', code(`${formatGB(mem.totalBytes)} GB`)],
+    ['Used', code(`${formatGB(mem.usedBytes)} GB`)],
+    ['Free', code(`${formatGB(mem.freeBytes)} GB`)],
   ]);
 }
 
 export function buildGpuTooltip(gpu: GpuInfo): string {
   const rows: [string, string][] = [['Name', gpu.name]];
   if (gpu.coreUsage !== null) {
-    rows.push(['Core Usage', `${gpu.coreUsage.toFixed(1)}%`]);
+    rows.push(['Core Usage', code(gpu.coreUsage.toFixed(1).padStart(5) + '%')]);
   }
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
     rows.push([
       'VRAM',
-      `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`,
+      code(
+        `${(gpu.vramUsedMB / 1024).toFixed(1).padStart(5)}/${(gpu.vramTotalMB / 1024).toFixed(1).padStart(5)} GB`,
+      ),
     ]);
   } else if (gpu.vramUsedMB !== null) {
-    rows.push(['VRAM Used', `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`]);
+    rows.push([
+      'VRAM Used',
+      code(`${(gpu.vramUsedMB / 1024).toFixed(1).padStart(5)} GB`),
+    ]);
   }
   if (gpu.temperatureC !== null) {
-    rows.push(['Temperature', `${gpu.temperatureC}\u00B0C`]);
+    rows.push([
+      'Temperature',
+      code(String(gpu.temperatureC).padStart(3) + '\u00B0C'),
+    ]);
   }
   return table(rows);
 }
