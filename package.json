@@ -1,7 +1,7 @@
 {
   "name": "resource-lens",
   "displayName": "Resource Lens",
-  "description": "Display CPU, Memory, and GPU usage in the VS Code status bar",
+  "description": "Display CPU, Memory, and GPU usage in the VS Code / Cursor status bar",
   "version": "0.0.0",
   "publisher": "chatflip",
   "license": "Apache-2.0",
@@ -20,7 +20,8 @@
     "gpu",
     "vram",
     "system-monitor",
-    "nvidia"
+    "nvidia",
+    "cursor"
   ],
   "categories": [
     "Other",
