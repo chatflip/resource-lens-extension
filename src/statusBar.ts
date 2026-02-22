@@ -57,7 +57,7 @@ export class StatusBarManager {
       this.cpuItem,
       'cpu',
       cpu && config.get<boolean>('showCpu', true)
-        ? `CPU ${cpu.overall.toFixed(1).padStart(4)}%`
+        ? `$(chip) ${cpu.overall.toFixed(1).padStart(4)}%`
         : null,
       cpu ? buildCpuTooltip(cpu) : null,
     );
@@ -66,7 +66,7 @@ export class StatusBarManager {
       this.memItem,
       'mem',
       mem && config.get<boolean>('showMemory', true)
-        ? `RAM ${(mem.usedBytes / 1024 / 1024 / 1024).toFixed(1)}/${(mem.totalBytes / 1024 / 1024 / 1024).toFixed(1)} GB`
+        ? `$(server) ${(mem.usedBytes / 1024 / 1024 / 1024).toFixed(1)}/${(mem.totalBytes / 1024 / 1024 / 1024).toFixed(1)} GB`
         : null,
       mem ? buildMemoryTooltip(mem) : null,
     );
@@ -74,11 +74,11 @@ export class StatusBarManager {
     let gpuText: string | null = null;
     if (gpu && config.get<boolean>('showGpu', true)) {
       if (gpu.vramUsedMB !== null && gpu.vramTotalMB !== null) {
-        gpuText = `VRAM ${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`;
+        gpuText = `$(graph-line) ${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`;
       } else if (gpu.vramUsedMB !== null) {
-        gpuText = `VRAM ${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
+        gpuText = `$(graph-line) ${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
       } else {
-        gpuText = `VRAM N/A`;
+        gpuText = `$(graph-line) N/A`;
       }
     }
     this.updateItem(
