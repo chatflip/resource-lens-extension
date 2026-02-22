@@ -13,6 +13,7 @@ export class StatusBarManager {
   private cpuTooltip: vscode.MarkdownString;
   private memTooltip: vscode.MarkdownString;
   private gpuTooltip: vscode.MarkdownString;
+  private lastTexts = { cpu: '', mem: '', gpu: '' };
 
   constructor() {
     this.cpuItem = vscode.window.createStatusBarItem(
@@ -37,15 +38,20 @@ export class StatusBarManager {
 
   private updateItem(
     item: vscode.StatusBarItem,
+    key: keyof typeof this.lastTexts,
     text: string | null,
     tooltipContent: string | null,
     tooltipObj: vscode.MarkdownString,
   ): void {
     if (text !== null && tooltipContent !== null) {
-      item.text = text;
+      if (text !== this.lastTexts[key]) {
+        item.text = text;
+        this.lastTexts[key] = text;
+      }
       tooltipObj.value = tooltipContent;
       item.show();
     } else {
+      this.lastTexts[key] = '';
       tooltipObj.value = '';
       item.hide();
     }
@@ -60,6 +66,7 @@ export class StatusBarManager {
 
     this.updateItem(
       this.cpuItem,
+      'cpu',
       cpu && config.get<boolean>('showCpu', true)
         ? `$(chip) ${cpu.overall.toFixed(1).padStart(4)}%`
         : null,
@@ -69,6 +76,7 @@ export class StatusBarManager {
 
     this.updateItem(
       this.memItem,
+      'mem',
       mem && config.get<boolean>('showMemory', true)
         ? `$(server) ${(mem.usedBytes / 1024 / 1024 / 1024).toFixed(1)}/${(mem.totalBytes / 1024 / 1024 / 1024).toFixed(1)} GB`
         : null,
@@ -88,6 +96,7 @@ export class StatusBarManager {
     }
     this.updateItem(
       this.gpuItem,
+      'gpu',
       gpuText,
       gpu ? buildGpuTooltip(gpu) : null,
       this.gpuTooltip,
