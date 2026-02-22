@@ -49,6 +49,12 @@ To show CPU only:
 }
 ```
 
+## Known issues
+
+- Tooltip content may flicker or briefly disappear while values update. This is a
+  [VS Code limitation](https://github.com/microsoft/vscode/issues/128887) and
+  not specific to this extension.
+
 ## License
 
 [Apache-2.0](LICENSE.txt)

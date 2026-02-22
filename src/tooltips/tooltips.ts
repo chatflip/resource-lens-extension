@@ -1,19 +1,16 @@
-import * as vscode from 'vscode';
 import { CpuInfo, MemoryInfo, GpuInfo } from '../collectors/types';
 
-function table(rows: [string, string][]): vscode.MarkdownString {
-  const md = new vscode.MarkdownString();
-  md.supportHtml = false;
-  md.appendMarkdown('| | |\n|---|---|\n');
-  for (const [k, v] of rows) md.appendMarkdown(`| **${k}** | ${v} |\n`);
-  return md;
+function table(rows: [string, string][]): string {
+  let content = '| | |\n|---|---|\n';
+  for (const [k, v] of rows) content += `| **${k}** | ${v} |\n`;
+  return content;
 }
 
 function formatGB(bytes: number): string {
   return (bytes / 1024 / 1024 / 1024).toFixed(1);
 }
 
-export function buildCpuTooltip(cpu: CpuInfo): vscode.MarkdownString {
+export function buildCpuTooltip(cpu: CpuInfo): string {
   return table([
     ['Model', cpu.model],
     ['Cores', String(cpu.cores.length)],
@@ -21,7 +18,7 @@ export function buildCpuTooltip(cpu: CpuInfo): vscode.MarkdownString {
   ]);
 }
 
-export function buildMemoryTooltip(mem: MemoryInfo): vscode.MarkdownString {
+export function buildMemoryTooltip(mem: MemoryInfo): string {
   return table([
     ['Total', `${formatGB(mem.totalBytes)} GB`],
     ['Used', `${formatGB(mem.usedBytes)} GB`],
@@ -29,7 +26,7 @@ export function buildMemoryTooltip(mem: MemoryInfo): vscode.MarkdownString {
   ]);
 }
 
-export function buildGpuTooltip(gpu: GpuInfo): vscode.MarkdownString {
+export function buildGpuTooltip(gpu: GpuInfo): string {
   const rows: [string, string][] = [['Name', gpu.name]];
   if (gpu.coreUsage !== null) {
     rows.push(['Core Usage', `${gpu.coreUsage.toFixed(1)}%`]);
