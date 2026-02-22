@@ -50,7 +50,7 @@ describe('collectGpu', () => {
     const mockExec = vi
       .fn()
       .mockResolvedValueOnce('NVIDIA RTX 3080') // detectGpu
-      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42'); // collectNvidia
+      .mockResolvedValueOnce('10240, 4096, 65, 42'); // collectNvidia
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
     const { collectGpu } = await import('./gpuCollector');
@@ -69,7 +69,7 @@ describe('collectGpu', () => {
     const mockExec = vi
       .fn()
       .mockResolvedValueOnce('NVIDIA RTX 3080') // detectGpu
-      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42') // first collect succeeds
+      .mockResolvedValueOnce('10240, 4096, 65, 42') // first collect succeeds
       .mockRejectedValueOnce(new Error('nvidia-smi timeout')); // second collect fails
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
@@ -99,7 +99,7 @@ describe('collectGpu', () => {
     const mockExec = vi
       .fn()
       .mockResolvedValueOnce('NVIDIA RTX 3080') // auto-detect
-      .mockResolvedValueOnce('NVIDIA RTX 3080, 10240, 4096, 65, 42'); // collect
+      .mockResolvedValueOnce('10240, 4096, 65, 42'); // collect
     vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
 
     const { collectGpu } = await import('./gpuCollector');
@@ -107,5 +107,39 @@ describe('collectGpu', () => {
 
     expect(result).not.toBeNull();
     expect(mockExec).toHaveBeenCalledTimes(2); // detectGpu + collectNvidia
+  });
+
+  it('does not treat 0 as null for numeric fields', async () => {
+    const mockExec = vi
+      .fn()
+      .mockResolvedValueOnce('NVIDIA RTX 3080') // detectGpu
+      .mockResolvedValueOnce('10240, 0, 0, 0'); // collectNvidia
+    vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
+
+    const { collectGpu } = await import('./gpuCollector');
+    const result = await collectGpu();
+
+    expect(result).not.toBeNull();
+    expect(result!.vramUsedMB).toBe(0);
+    expect(result!.temperatureC).toBe(0);
+    expect(result!.coreUsage).toBe(0);
+  });
+
+  it('parses correctly when GPU name contains a comma', async () => {
+    const mockExec = vi
+      .fn()
+      .mockResolvedValueOnce('NVIDIA GeForce RTX 3080, Founders Edition') // detectGpu
+      .mockResolvedValueOnce('10240, 4096, 65, 42'); // collectNvidia
+    vi.doMock('../utils/exec', () => ({ execFileAsync: mockExec }));
+
+    const { collectGpu } = await import('./gpuCollector');
+    const result = await collectGpu();
+
+    expect(result).not.toBeNull();
+    expect(result!.name).toBe('NVIDIA GeForce RTX 3080, Founders Edition');
+    expect(result!.vramTotalMB).toBe(10240);
+    expect(result!.vramUsedMB).toBe(4096);
+    expect(result!.temperatureC).toBe(65);
+    expect(result!.coreUsage).toBe(42);
   });
 });

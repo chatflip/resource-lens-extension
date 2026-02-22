@@ -3,10 +3,17 @@ import { execFileAsync } from '../utils/exec';
 
 let detected: boolean | undefined;
 let lastGpuInfo: GpuInfo | null = null;
+let gpuName: string = 'NVIDIA GPU';
+
+function toNumberOrNull(value: string | undefined): number | null {
+  if (value === undefined) return null;
+  const n = parseFloat(value);
+  return Number.isNaN(n) ? null : n;
+}
 
 async function collectNvidia(): Promise<GpuInfo> {
   const output = await execFileAsync('nvidia-smi', [
-    '--query-gpu=name,memory.total,memory.used,temperature.gpu,utilization.gpu',
+    '--query-gpu=memory.total,memory.used,temperature.gpu,utilization.gpu',
     '--format=csv,noheader,nounits',
   ]);
 
@@ -14,14 +21,14 @@ async function collectNvidia(): Promise<GpuInfo> {
     .trim()
     .split(',')
     .map((s) => s.trim());
-  // name, memory.total (MB), memory.used (MB), temperature (C), utilization (%)
+  // memory.total (MB), memory.used (MB), temperature (C), utilization (%)
   return {
-    name: parts[0] ?? 'NVIDIA GPU',
+    name: gpuName,
     vendor: 'NVIDIA',
-    vramTotalMB: parseFloat(parts[1]) || null,
-    vramUsedMB: parseFloat(parts[2]) || null,
-    temperatureC: parseFloat(parts[3]) || null,
-    coreUsage: Number.isNaN(parseFloat(parts[4])) ? null : parseFloat(parts[4]),
+    vramTotalMB: toNumberOrNull(parts[0]),
+    vramUsedMB: toNumberOrNull(parts[1]),
+    temperatureC: toNumberOrNull(parts[2]),
+    coreUsage: toNumberOrNull(parts[3]),
   };
 }
 
@@ -30,11 +37,12 @@ async function collectNvidia(): Promise<GpuInfo> {
  */
 export async function detectGpu(): Promise<boolean> {
   try {
-    await execFileAsync(
+    const name = await execFileAsync(
       'nvidia-smi',
       ['--query-gpu=name', '--format=csv,noheader'],
       2000,
     );
+    gpuName = name.trim() || 'NVIDIA GPU';
     detected = true;
   } catch {
     detected = false;
