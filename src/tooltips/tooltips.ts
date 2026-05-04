@@ -58,9 +58,16 @@ export function buildGpuTooltip(gpu: GpuInfo[]): string {
     formatGpuTemperature(g),
   ]);
 
+  const hasAllUsed = gpu.every((g) => g.vramUsedMB !== null);
+  const hasAllTotal = gpu.every((g) => g.vramTotalMB !== null);
+  const totalUsed = gpu.reduce((sum, g) => sum + (g.vramUsedMB ?? 0), 0);
+  const totalVram = gpu.reduce((sum, g) => sum + (g.vramTotalMB ?? 0), 0);
+
   let content = '| Name | Usage | VRAM | Temp |\n|:---|---:|---:|---:|\n';
   for (const [name, usage, vram, temperature] of rows) {
     content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
   }
+  content += `| -------- | -------- | -------- | -------- |\n`;
+  content += `| VRAM (total) |  | ${hasAllUsed && hasAllTotal ? `${(totalUsed / 1024).toFixed(1)}/${(totalVram / 1024).toFixed(1)} GB` : ''} |  |\n`;
   return content;
 }

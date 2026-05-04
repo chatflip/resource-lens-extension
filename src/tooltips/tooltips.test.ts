@@ -81,5 +81,6 @@ describe('buildGpuTooltip', () => {
     expect(tooltip).toContain(
       '| NVIDIA RTX 3080 | 5.0% | 1.0/10.0 GB | 58°C |',
     );
+    expect(tooltip).toContain('| VRAM (total) |  | 9.0/34.0 GB |  |');
   });
 });
