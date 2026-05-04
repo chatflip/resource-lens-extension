@@ -14,25 +14,25 @@ describe('buildCpuTooltip', () => {
       speedMHz: 3200,
     });
 
-    expect(tooltip).toContain('| Name | Usage (%) |');
-    expect(tooltip).toContain('| Core 1 | 10.0 |');
-    expect(tooltip).toContain('| Core 2 | 20.0 |');
-    expect(tooltip).toContain('| Core 3 | 30.0 |');
-    expect(tooltip).toContain('| Core 4 | 40.0 |');
-    expect(tooltip).toContain('| CPU (overall) | 25.0 |');
+    expect(tooltip).toContain('| Name | Usage |');
+    expect(tooltip).toContain('| Core 1 | 10.0% |');
+    expect(tooltip).toContain('| Core 2 | 20.0% |');
+    expect(tooltip).toContain('| Core 3 | 30.0% |');
+    expect(tooltip).toContain('| Core 4 | 40.0% |');
+    expect(tooltip).toContain('| CPU (overall) | 25.0% |');
     const spacerIndex = tooltip.indexOf('| -------- | -------- |');
-    expect(spacerIndex).toBeGreaterThan(tooltip.indexOf('| Core 4 | 40.0 |'));
+    expect(spacerIndex).toBeGreaterThan(tooltip.indexOf('| Core 4 | 40.0% |'));
     expect(spacerIndex).toBeLessThan(
-      tooltip.indexOf('| CPU (overall) | 25.0 |'),
+      tooltip.indexOf('| CPU (overall) | 25.0% |'),
     );
-    expect(tooltip.indexOf('| Core 4 | 40.0 |')).toBeLessThan(
-      tooltip.indexOf('| CPU (overall) | 25.0 |'),
+    expect(tooltip.indexOf('| Core 4 | 40.0% |')).toBeLessThan(
+      tooltip.indexOf('| CPU (overall) | 25.0% |'),
     );
-    expect(tooltip).toContain('| Name | Cores | Speed (MHz) |');
+    expect(tooltip).toContain('| Name | Cores | Speed |');
     expect(tooltip).toContain('|:---|---:|---:|');
-    expect(tooltip).toContain('| Apple M3 | 4 | 3200 |');
-    expect(tooltip.indexOf('| Name | Cores | Speed (MHz) |')).toBeLessThan(
-      tooltip.indexOf('| Name | Usage (%) |'),
+    expect(tooltip).toContain('| Apple M3 | 4 | 3200 MHz |');
+    expect(tooltip.indexOf('| Name | Cores | Speed |')).toBeLessThan(
+      tooltip.indexOf('| Name | Usage |'),
     );
   });
 });
@@ -46,9 +46,9 @@ describe('buildMemoryTooltip', () => {
       freeBytes: 8.5 * gib,
     });
 
-    expect(tooltip).toContain('| Used (GB) | Free (GB) | Total (GB) |');
+    expect(tooltip).toContain('| Used | Free | Total |');
     expect(tooltip).toContain('|---:|---:|---:|');
-    expect(tooltip).toContain('| 7.5 | 8.5 | 16.0 |');
+    expect(tooltip).toContain('| 7.5 GB | 8.5 GB | 16.0 GB |');
   });
 });
 
@@ -73,9 +73,13 @@ describe('buildGpuTooltip', () => {
       },
     ]);
 
-    expect(tooltip).toContain('| Name | Usage (%) | VRAM (GB) | Temp (°C) |');
+    expect(tooltip).toContain('| Name | Usage | VRAM | Temp |');
     expect(tooltip).toContain('|:---|---:|---:|---:|');
-    expect(tooltip).toContain('| NVIDIA RTX 4090 | 42.0 | 8.0/24.0 | 65 |');
-    expect(tooltip).toContain('| NVIDIA RTX 3080 | 5.0 | 1.0/10.0 | 58 |');
+    expect(tooltip).toContain(
+      '| NVIDIA RTX 4090 | 42.0% | 8.0/24.0 GB | 65°C |',
+    );
+    expect(tooltip).toContain(
+      '| NVIDIA RTX 3080 | 5.0% | 1.0/10.0 GB | 58°C |',
+    );
   });
 });
