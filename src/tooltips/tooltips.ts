@@ -26,24 +26,35 @@ export function buildMemoryTooltip(mem: MemoryInfo): string {
   ]);
 }
 
-function formatGpuLine(gpu: GpuInfo): string {
-  const parts = [gpu.name];
-  if (gpu.coreUsage !== null) {
-    parts.push(`${gpu.coreUsage.toFixed(1)}%`);
-  }
+function formatGpuUsage(gpu: GpuInfo): string {
+  return gpu.coreUsage !== null ? `${gpu.coreUsage.toFixed(1)}%` : '';
+}
+
+function formatGpuVram(gpu: GpuInfo): string {
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
-    parts.push(
-      `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`,
-    );
-  } else if (gpu.vramUsedMB !== null) {
-    parts.push(`${(gpu.vramUsedMB / 1024).toFixed(1)} GB`);
+    return `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`;
   }
-  if (gpu.temperatureC !== null) {
-    parts.push(`${gpu.temperatureC}\u00B0C`);
+  if (gpu.vramUsedMB !== null) {
+    return `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
   }
-  return parts.join(' ');
+  return '';
+}
+
+function formatGpuTemperature(gpu: GpuInfo): string {
+  return gpu.temperatureC !== null ? `${gpu.temperatureC}\u00B0C` : '';
 }
 
 export function buildGpuTooltip(gpu: GpuInfo[]): string {
-  return gpu.map(formatGpuLine).join('\n');
+  const rows: [string, string, string, string][] = gpu.map((g) => [
+    g.name,
+    formatGpuUsage(g),
+    formatGpuVram(g),
+    formatGpuTemperature(g),
+  ]);
+
+  let content = '| Name | Usage | VRAM | Temperature |\n|---|---:|---:|---:|\n';
+  for (const [name, usage, vram, temperature] of rows) {
+    content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
+  }
+  return content;
 }
