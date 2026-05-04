@@ -26,21 +26,24 @@ export function buildMemoryTooltip(mem: MemoryInfo): string {
   ]);
 }
 
-export function buildGpuTooltip(gpu: GpuInfo): string {
-  const rows: [string, string][] = [['Name', gpu.name]];
+function formatGpuLine(gpu: GpuInfo): string {
+  const parts = [gpu.name];
   if (gpu.coreUsage !== null) {
-    rows.push(['Core Usage', `${gpu.coreUsage.toFixed(1)}%`]);
+    parts.push(`${gpu.coreUsage.toFixed(1)}%`);
   }
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
-    rows.push([
-      'VRAM',
+    parts.push(
       `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`,
-    ]);
+    );
   } else if (gpu.vramUsedMB !== null) {
-    rows.push(['VRAM Used', `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`]);
+    parts.push(`${(gpu.vramUsedMB / 1024).toFixed(1)} GB`);
   }
   if (gpu.temperatureC !== null) {
-    rows.push(['Temperature', `${gpu.temperatureC}\u00B0C`]);
+    parts.push(`${gpu.temperatureC}\u00B0C`);
   }
-  return table(rows);
+  return parts.join(' ');
+}
+
+export function buildGpuTooltip(gpu: GpuInfo[]): string {
+  return gpu.map(formatGpuLine).join('\n');
 }

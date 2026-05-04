@@ -13,7 +13,8 @@ temperature.
 ## GPU support
 
 Only NVIDIA GPUs are supported, via `nvidia-smi`. If `nvidia-smi` isn't
-found, the GPU item is hidden automatically.
+found, the GPU item is hidden automatically. Multiple NVIDIA GPUs are shown as
+aggregated VRAM usage in the status bar, with per-GPU details in the tooltip.
 
 Tested on Docker (Linux) with an RTX 2080 Ti.
 

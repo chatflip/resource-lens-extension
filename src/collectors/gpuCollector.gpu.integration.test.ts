@@ -17,44 +17,48 @@ describe('GPU integration (requires nvidia-smi in PATH)', () => {
   it('collectGpu returns non-null result', async () => {
     const result = await collectGpu();
     expect(result).not.toBeNull();
+    expect(result!.length).toBeGreaterThan(0);
   });
 
   it('returns NVIDIA as vendor', async () => {
     const result = await collectGpu();
-    expect(result!.vendor).toBe('NVIDIA');
+    expect(result![0].vendor).toBe('NVIDIA');
   });
 
   it('returns a non-empty GPU name', async () => {
     const result = await collectGpu();
-    expect(result!.name).toBeTruthy();
+    expect(result![0].name).toBeTruthy();
   });
 
   it('VRAM values are in valid ranges', async () => {
     const result = await collectGpu();
-    if (result!.vramTotalMB !== null) {
-      expect(result!.vramTotalMB).toBeGreaterThan(0);
+    const gpu = result![0];
+    if (gpu.vramTotalMB !== null) {
+      expect(gpu.vramTotalMB).toBeGreaterThan(0);
     }
-    if (result!.vramUsedMB !== null) {
-      expect(result!.vramUsedMB).toBeGreaterThanOrEqual(0);
-      if (result!.vramTotalMB !== null) {
-        expect(result!.vramUsedMB).toBeLessThanOrEqual(result!.vramTotalMB);
+    if (gpu.vramUsedMB !== null) {
+      expect(gpu.vramUsedMB).toBeGreaterThanOrEqual(0);
+      if (gpu.vramTotalMB !== null) {
+        expect(gpu.vramUsedMB).toBeLessThanOrEqual(gpu.vramTotalMB);
       }
     }
   });
 
   it('temperature is in plausible range (0-120°C)', async () => {
     const result = await collectGpu();
-    if (result!.temperatureC !== null) {
-      expect(result!.temperatureC).toBeGreaterThan(0);
-      expect(result!.temperatureC).toBeLessThan(120);
+    const gpu = result![0];
+    if (gpu.temperatureC !== null) {
+      expect(gpu.temperatureC).toBeGreaterThan(0);
+      expect(gpu.temperatureC).toBeLessThan(120);
     }
   });
 
   it('core usage is in range 0-100%', async () => {
     const result = await collectGpu();
-    if (result!.coreUsage !== null) {
-      expect(result!.coreUsage).toBeGreaterThanOrEqual(0);
-      expect(result!.coreUsage).toBeLessThanOrEqual(100);
+    const gpu = result![0];
+    if (gpu.coreUsage !== null) {
+      expect(gpu.coreUsage).toBeGreaterThanOrEqual(0);
+      expect(gpu.coreUsage).toBeLessThanOrEqual(100);
     }
   });
 });
