@@ -1,9 +1,15 @@
 import { CpuInfo, MemoryInfo, GpuInfo } from '../collectors/types';
 
-function table(rows: [string, string][]): string {
-  let content = '| | |\n|---|---|\n';
-  for (const [k, v] of rows) content += `| **${k}** | ${v} |\n`;
+function usageTable(rows: [string, string][]): string {
+  let content = '| Name | Usage (%) |\n|:---|---:|\n';
+  for (const [name, usage] of rows) {
+    content += `| ${name} | ${usage} |\n`;
+  }
   return content;
+}
+
+function cpuSpecsTable(cpu: CpuInfo): string {
+  return `| Name | Cores | Speed (MHz) |\n|:---|---:|---:|\n| ${cpu.model} | ${cpu.cores.length} | ${cpu.speedMHz} |\n`;
 }
 
 function formatGB(bytes: number): string {
@@ -11,37 +17,37 @@ function formatGB(bytes: number): string {
 }
 
 export function buildCpuTooltip(cpu: CpuInfo): string {
-  return table([
-    ['Model', cpu.model],
-    ['Cores', String(cpu.cores.length)],
-    ['Speed', `${cpu.speedMHz} MHz`],
-  ]);
+  const coreUsageRows: [string, string][] = [];
+
+  for (const [i, usage] of cpu.cores.entries()) {
+    coreUsageRows.push([`Core ${i + 1}`, usage.toFixed(1)]);
+  }
+  coreUsageRows.push(['--------', '--------']);
+  coreUsageRows.push(['CPU (overall)', cpu.overall.toFixed(1)]);
+
+  return `${cpuSpecsTable(cpu)}\n${usageTable(coreUsageRows)}`;
 }
 
 export function buildMemoryTooltip(mem: MemoryInfo): string {
-  return table([
-    ['Total', `${formatGB(mem.totalBytes)} GB`],
-    ['Used', `${formatGB(mem.usedBytes)} GB`],
-    ['Free', `${formatGB(mem.freeBytes)} GB`],
-  ]);
+  return `| Used (GB) | Free (GB) | Total (GB) |\n|---:|---:|---:|\n| ${formatGB(mem.usedBytes)} | ${formatGB(mem.freeBytes)} | ${formatGB(mem.totalBytes)} |\n`;
 }
 
 function formatGpuUsage(gpu: GpuInfo): string {
-  return gpu.coreUsage !== null ? `${gpu.coreUsage.toFixed(1)}%` : '';
+  return gpu.coreUsage !== null ? gpu.coreUsage.toFixed(1) : '';
 }
 
 function formatGpuVram(gpu: GpuInfo): string {
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
-    return `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`;
+    return `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)}`;
   }
   if (gpu.vramUsedMB !== null) {
-    return `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
+    return (gpu.vramUsedMB / 1024).toFixed(1);
   }
   return '';
 }
 
 function formatGpuTemperature(gpu: GpuInfo): string {
-  return gpu.temperatureC !== null ? `${gpu.temperatureC}\u00B0C` : '';
+  return gpu.temperatureC !== null ? String(gpu.temperatureC) : '';
 }
 
 export function buildGpuTooltip(gpu: GpuInfo[]): string {
@@ -52,7 +58,8 @@ export function buildGpuTooltip(gpu: GpuInfo[]): string {
     formatGpuTemperature(g),
   ]);
 
-  let content = '| Name | Usage | VRAM | Temp |\n|:---|---:|---:|---:|\n';
+  let content =
+    '| Name | Usage (%) | VRAM (GB) | Temp (°C) |\n|:---|---:|---:|---:|\n';
   for (const [name, usage, vram, temperature] of rows) {
     content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
   }
