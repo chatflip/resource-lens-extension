@@ -22,7 +22,8 @@ describe('buildGpuTooltip', () => {
       },
     ]);
 
-    expect(tooltip).toContain('| Name | Usage | VRAM | Temperature |');
+    expect(tooltip).toContain('| Name | Usage | VRAM | Temp |');
+    expect(tooltip).toContain('|:---|---:|---:|---:|');
     expect(tooltip).toContain(
       '| NVIDIA RTX 4090 | 42.0% | 8.0/24.0 GB | 65°C |',
     );

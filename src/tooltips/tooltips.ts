@@ -52,7 +52,7 @@ export function buildGpuTooltip(gpu: GpuInfo[]): string {
     formatGpuTemperature(g),
   ]);
 
-  let content = '| Name | Usage | VRAM | Temperature |\n|---|---:|---:|---:|\n';
+  let content = '| Name | Usage | VRAM | Temp |\n|:---|---:|---:|---:|\n';
   for (const [name, usage, vram, temperature] of rows) {
     content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
   }
