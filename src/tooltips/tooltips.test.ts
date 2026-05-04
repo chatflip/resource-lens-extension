@@ -9,30 +9,28 @@ describe('buildCpuTooltip', () => {
   it('renders CPU rows with readable headers', () => {
     const tooltip = buildCpuTooltip({
       model: 'Apple M3',
-      cores: [10, 20, 30, 40],
+      cores: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
       overall: 25,
       speedMHz: 3200,
     });
 
-    expect(tooltip).toContain('| Name | Usage |');
-    expect(tooltip).toContain('| Core 1 | 10.0% |');
-    expect(tooltip).toContain('| Core 2 | 20.0% |');
-    expect(tooltip).toContain('| Core 3 | 30.0% |');
-    expect(tooltip).toContain('| Core 4 | 40.0% |');
-    expect(tooltip).toContain('| CPU (overall) | 25.0% |');
-    const spacerIndex = tooltip.indexOf('| -------- | -------- |');
-    expect(spacerIndex).toBeGreaterThan(tooltip.indexOf('| Core 4 | 40.0% |'));
-    expect(spacerIndex).toBeLessThan(
-      tooltip.indexOf('| CPU (overall) | 25.0% |'),
+    expect(tooltip).toContain('| Name | Usage | \\| | Name | Usage |');
+    expect(tooltip).toContain('| Core 1 | 10.0% | \\| | Core 9 | 90.0% |');
+    expect(tooltip).toContain('| Core 2 | 20.0% | \\| | Core 10 | 100.0% |');
+    expect(tooltip).toContain('| Core 8 | 80.0% | \\| |  |  |');
+    expect(tooltip).toContain('| ---- | ---- |');
+    expect(tooltip).toContain('| Average | 25.0% |');
+    expect(tooltip.indexOf('| Core 8 | 80.0% | \\| |  |  |')).toBeLessThan(
+      tooltip.indexOf('| Average | 25.0% |'),
     );
-    expect(tooltip.indexOf('| Core 4 | 40.0% |')).toBeLessThan(
-      tooltip.indexOf('| CPU (overall) | 25.0% |'),
+    expect(tooltip.indexOf('| Name | Usage | \\| | Name | Usage |')).toBe(
+      tooltip.lastIndexOf('| Name | Usage | \\| | Name | Usage |'),
     );
     expect(tooltip).toContain('| Name | Cores | Speed |');
     expect(tooltip).toContain('|:---|---:|---:|');
-    expect(tooltip).toContain('| Apple M3 | 4 | 3200 MHz |');
+    expect(tooltip).toContain('| Apple M3 | 10 | 3200 MHz |');
     expect(tooltip.indexOf('| Name | Cores | Speed |')).toBeLessThan(
-      tooltip.indexOf('| Name | Usage |'),
+      tooltip.indexOf('| Name | Usage | \\| | Name | Usage |'),
     );
   });
 });

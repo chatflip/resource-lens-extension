@@ -8,6 +8,43 @@ function usageTable(rows: [string, string][]): string {
   return content;
 }
 
+function usageRows(rows: [string, string][]): string {
+  let content = '';
+  for (const [name, usage] of rows) {
+    content += `| ${name} | ${usage} |\n`;
+  }
+  return content;
+}
+
+function chunkRows<T>(rows: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < rows.length; i += size) {
+    chunks.push(rows.slice(i, i + size));
+  }
+  return chunks;
+}
+
+function multiColumnUsageTable(rows: [string, string][], size: number): string {
+  const chunks = chunkRows(rows, size);
+  const headerCells = chunks.flatMap((_, i) =>
+    i === chunks.length - 1 ? ['Name', 'Usage'] : ['Name', 'Usage', '\\|'],
+  );
+  const alignCells = chunks.flatMap((_, i) =>
+    i === chunks.length - 1 ? [':---', '---:'] : [':---', '---:', ':---:'],
+  );
+  let content = `| ${headerCells.join(' | ')} |\n|${alignCells.join('|')}|\n`;
+
+  for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+    const cells = chunks.flatMap((chunk, i) => {
+      const row = chunk[rowIndex];
+      const rowCells = row ?? ['', ''];
+      return i === chunks.length - 1 ? rowCells : [...rowCells, '\\|'];
+    });
+    content += `| ${cells.join(' | ')} |\n`;
+  }
+  return content;
+}
+
 function cpuSpecsTable(cpu: CpuInfo): string {
   return `| Name | Cores | Speed |\n|:---|---:|---:|\n| ${cpu.model} | ${cpu.cores.length} | ${cpu.speedMHz} MHz |\n`;
 }
@@ -22,10 +59,14 @@ export function buildCpuTooltip(cpu: CpuInfo): string {
   for (const [i, usage] of cpu.cores.entries()) {
     coreUsageRows.push([`Core ${i + 1}`, `${usage.toFixed(1)}%`]);
   }
-  coreUsageRows.push(['--------', '--------']);
-  coreUsageRows.push(['CPU (overall)', `${cpu.overall.toFixed(1)}%`]);
 
-  return `${cpuSpecsTable(cpu)}\n${usageTable(coreUsageRows)}`;
+  const coreUsageTable = multiColumnUsageTable(coreUsageRows, 8);
+  const overallRows = usageRows([
+    ['----', '----'],
+    ['Average', `${cpu.overall.toFixed(1)}%`],
+  ]);
+
+  return `${cpuSpecsTable(cpu)}\n${coreUsageTable}${overallRows}`;
 }
 
 export function buildMemoryTooltip(mem: MemoryInfo): string {
@@ -67,7 +108,7 @@ export function buildGpuTooltip(gpu: GpuInfo[]): string {
   for (const [name, usage, vram, temperature] of rows) {
     content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
   }
-  content += `| -------- | -------- | -------- | -------- |\n`;
+  content += `| ---- | ---- | ---- | ---- |\n`;
   content += `| VRAM (total) |  | ${hasAllUsed && hasAllTotal ? `${(totalUsed / 1024).toFixed(1)}/${(totalVram / 1024).toFixed(1)} GB` : ''} |  |\n`;
   return content;
 }
