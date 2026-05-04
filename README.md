@@ -5,15 +5,27 @@
 
 Shows CPU, memory, and GPU usage in the VS Code status bar.
 
-![status bar example](https://raw.githubusercontent.com/chatflip/resource-lens-extension/main/images/statusbar.png)
+## Screenshots
 
-Hover over any item for a tooltip with CPU model, memory breakdown, and GPU
-temperature.
+Hover over each status bar item for a compact tooltip with the most useful details.
+
+### CPU
+
+![CPU tooltip](https://raw.githubusercontent.com/chatflip/resource-lens-extension/main/images/tooltip-cpu.png)
+
+### RAM
+
+![RAM tooltip](https://raw.githubusercontent.com/chatflip/resource-lens-extension/main/images/tooltip-ram.png)
+
+### VRAM
+
+![VRAM tooltip](https://raw.githubusercontent.com/chatflip/resource-lens-extension/main/images/tooltip-vram.png)
 
 ## GPU support
 
 Only NVIDIA GPUs are supported, via `nvidia-smi`. If `nvidia-smi` isn't
-found, the GPU item is hidden automatically.
+found, the GPU item is hidden automatically. Multiple NVIDIA GPUs are shown as
+aggregated VRAM usage in the status bar, with per-GPU details in the tooltip.
 
 Tested on Docker (Linux) with an RTX 2080 Ti.
 
@@ -27,7 +39,6 @@ Search for **Resource Lens** in the Extensions panel.
 {
   // Update interval in ms (minimum 500)
   "resourceLens.updateIntervalMs": 1000,
-
   "resourceLens.showCpu": true,
   "resourceLens.showMemory": true,
   "resourceLens.showGpu": true,

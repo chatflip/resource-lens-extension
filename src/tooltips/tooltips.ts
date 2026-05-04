@@ -1,9 +1,44 @@
 import { CpuInfo, MemoryInfo, GpuInfo } from '../collectors/types';
 
-function table(rows: [string, string][]): string {
-  let content = '| | |\n|---|---|\n';
-  for (const [k, v] of rows) content += `| **${k}** | ${v} |\n`;
+function usageRows(rows: [string, string][]): string {
+  let content = '';
+  for (const [name, usage] of rows) {
+    content += `| ${name} | ${usage} |\n`;
+  }
   return content;
+}
+
+function chunkRows<T>(rows: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < rows.length; i += size) {
+    chunks.push(rows.slice(i, i + size));
+  }
+  return chunks;
+}
+
+function multiColumnUsageTable(rows: [string, string][], size: number): string {
+  const chunks = chunkRows(rows, size);
+  const headerCells = chunks.flatMap((_, i) =>
+    i === chunks.length - 1 ? ['Name', 'Usage'] : ['Name', 'Usage', '\\|'],
+  );
+  const alignCells = chunks.flatMap((_, i) =>
+    i === chunks.length - 1 ? [':---', '---:'] : [':---', '---:', ':---:'],
+  );
+  let content = `| ${headerCells.join(' | ')} |\n|${alignCells.join('|')}|\n`;
+
+  for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+    const cells = chunks.flatMap((chunk, i) => {
+      const row = chunk[rowIndex];
+      const rowCells = row ?? ['', ''];
+      return i === chunks.length - 1 ? rowCells : [...rowCells, '\\|'];
+    });
+    content += `| ${cells.join(' | ')} |\n`;
+  }
+  return content;
+}
+
+function cpuSpecsTable(cpu: CpuInfo): string {
+  return `| Name | Cores | Speed |\n|:---|---:|---:|\n| ${cpu.model} | ${cpu.cores.length} | ${cpu.speedMHz} MHz |\n`;
 }
 
 function formatGB(bytes: number): string {
@@ -11,36 +46,63 @@ function formatGB(bytes: number): string {
 }
 
 export function buildCpuTooltip(cpu: CpuInfo): string {
-  return table([
-    ['Model', cpu.model],
-    ['Cores', String(cpu.cores.length)],
-    ['Speed', `${cpu.speedMHz} MHz`],
+  const coreUsageRows: [string, string][] = [];
+
+  for (const [i, usage] of cpu.cores.entries()) {
+    coreUsageRows.push([`Core ${i + 1}`, `${usage.toFixed(1)}%`]);
+  }
+
+  const coreUsageTable = multiColumnUsageTable(coreUsageRows, 8);
+  const overallRows = usageRows([
+    ['----', '----'],
+    ['Average', `${cpu.overall.toFixed(1)}%`],
   ]);
+
+  return `${cpuSpecsTable(cpu)}\n${coreUsageTable}${overallRows}`;
 }
 
 export function buildMemoryTooltip(mem: MemoryInfo): string {
-  return table([
-    ['Total', `${formatGB(mem.totalBytes)} GB`],
-    ['Used', `${formatGB(mem.usedBytes)} GB`],
-    ['Free', `${formatGB(mem.freeBytes)} GB`],
-  ]);
+  return `| Used | Free | Total |\n|---:|---:|---:|\n| ${formatGB(mem.usedBytes)} GB | ${formatGB(mem.freeBytes)} GB | ${formatGB(mem.totalBytes)} GB |\n`;
 }
 
-export function buildGpuTooltip(gpu: GpuInfo): string {
-  const rows: [string, string][] = [['Name', gpu.name]];
-  if (gpu.coreUsage !== null) {
-    rows.push(['Core Usage', `${gpu.coreUsage.toFixed(1)}%`]);
-  }
+function formatGpuUsage(gpu: GpuInfo): string {
+  return gpu.coreUsage !== null ? `${gpu.coreUsage.toFixed(1)}%` : '';
+}
+
+function formatGpuVram(gpu: GpuInfo): string {
   if (gpu.vramTotalMB !== null && gpu.vramUsedMB !== null) {
-    rows.push([
-      'VRAM',
-      `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`,
-    ]);
-  } else if (gpu.vramUsedMB !== null) {
-    rows.push(['VRAM Used', `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`]);
+    return `${(gpu.vramUsedMB / 1024).toFixed(1)}/${(gpu.vramTotalMB / 1024).toFixed(1)} GB`;
   }
-  if (gpu.temperatureC !== null) {
-    rows.push(['Temperature', `${gpu.temperatureC}\u00B0C`]);
+  if (gpu.vramUsedMB !== null) {
+    return `${(gpu.vramUsedMB / 1024).toFixed(1)} GB`;
   }
-  return table(rows);
+  return '';
+}
+
+function formatGpuTemperature(gpu: GpuInfo): string {
+  return gpu.temperatureC !== null ? `${gpu.temperatureC}°C` : '';
+}
+
+export function buildGpuTooltip(gpu: GpuInfo[]): string {
+  const rows: [string, string, string, string][] = gpu.map((g) => [
+    g.name,
+    formatGpuUsage(g),
+    formatGpuVram(g),
+    formatGpuTemperature(g),
+  ]);
+
+  const hasAllUsed = gpu.every((g) => g.vramUsedMB !== null);
+  const hasAllTotal = gpu.every((g) => g.vramTotalMB !== null);
+  const totalUsed = gpu.reduce((sum, g) => sum + (g.vramUsedMB ?? 0), 0);
+  const totalVram = gpu.reduce((sum, g) => sum + (g.vramTotalMB ?? 0), 0);
+
+  let content = '| Name | Usage | VRAM | Temp |\n|:---|---:|---:|---:|\n';
+  for (const [name, usage, vram, temperature] of rows) {
+    content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
+  }
+  if (gpu.length > 1) {
+    content += `| ---- | ---- | ---- | ---- |\n`;
+    content += `| VRAM (total) |  | ${hasAllUsed && hasAllTotal ? `${(totalUsed / 1024).toFixed(1)}/${(totalVram / 1024).toFixed(1)} GB` : ''} |  |\n`;
+  }
+  return content;
 }

@@ -2,8 +2,7 @@ import { GpuInfo } from './types';
 import { execFileAsync } from '../utils/exec';
 
 let detected: boolean | undefined;
-let lastGpuInfo: GpuInfo | null = null;
-let gpuName: string = 'NVIDIA GPU';
+let lastGpuInfo: GpuInfo[] | null = null;
 
 function toNumberOrNull(value: string | undefined): number | null {
   if (value === undefined) return null;
@@ -11,25 +10,32 @@ function toNumberOrNull(value: string | undefined): number | null {
   return Number.isNaN(n) ? null : n;
 }
 
-async function collectNvidia(): Promise<GpuInfo> {
+function parseNvidiaLine(line: string): GpuInfo {
+  const parts = line.split(',').map((s) => s.trim());
+  const metricParts = parts.slice(-4);
+  const nameParts = parts.slice(0, -4);
+
+  return {
+    name: nameParts.join(', ') || 'NVIDIA GPU',
+    vendor: 'NVIDIA',
+    vramTotalMB: toNumberOrNull(metricParts[0]),
+    vramUsedMB: toNumberOrNull(metricParts[1]),
+    temperatureC: toNumberOrNull(metricParts[2]),
+    coreUsage: toNumberOrNull(metricParts[3]),
+  };
+}
+
+async function collectNvidia(): Promise<GpuInfo[]> {
   const output = await execFileAsync('nvidia-smi', [
-    '--query-gpu=memory.total,memory.used,temperature.gpu,utilization.gpu',
+    '--query-gpu=name,memory.total,memory.used,temperature.gpu,utilization.gpu',
     '--format=csv,noheader,nounits',
   ]);
 
-  const parts = output
+  return output
     .trim()
-    .split(',')
-    .map((s) => s.trim());
-  // memory.total (MB), memory.used (MB), temperature (C), utilization (%)
-  return {
-    name: gpuName,
-    vendor: 'NVIDIA',
-    vramTotalMB: toNumberOrNull(parts[0]),
-    vramUsedMB: toNumberOrNull(parts[1]),
-    temperatureC: toNumberOrNull(parts[2]),
-    coreUsage: toNumberOrNull(parts[3]),
-  };
+    .split(/\r?\n/)
+    .filter((line) => line.trim() !== '')
+    .map(parseNvidiaLine);
 }
 
 /**
@@ -42,8 +48,7 @@ export async function detectGpu(): Promise<boolean> {
       ['--query-gpu=name', '--format=csv,noheader'],
       2000,
     );
-    gpuName = name.trim() || 'NVIDIA GPU';
-    detected = true;
+    detected = name.trim() !== '';
   } catch {
     detected = false;
   }
@@ -55,7 +60,7 @@ export async function detectGpu(): Promise<boolean> {
  * Returns null if nvidia-smi is unavailable.
  * On error, returns the last successful reading.
  */
-export async function collectGpu(): Promise<GpuInfo | null> {
+export async function collectGpu(): Promise<GpuInfo[] | null> {
   if (detected === undefined) {
     await detectGpu();
   }
