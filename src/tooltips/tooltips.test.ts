@@ -81,4 +81,19 @@ describe('buildGpuTooltip', () => {
     );
     expect(tooltip).toContain('| VRAM (total) |  | 9.0/34.0 GB |  |');
   });
+
+  it('omits total VRAM row for a single GPU', () => {
+    const tooltip = buildGpuTooltip([
+      {
+        name: 'NVIDIA RTX 4090',
+        vendor: 'NVIDIA',
+        coreUsage: 42,
+        vramUsedMB: 8192,
+        vramTotalMB: 24576,
+        temperatureC: 65,
+      },
+    ]);
+
+    expect(tooltip).not.toContain('VRAM (total)');
+  });
 });

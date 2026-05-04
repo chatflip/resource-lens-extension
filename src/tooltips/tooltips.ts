@@ -108,7 +108,9 @@ export function buildGpuTooltip(gpu: GpuInfo[]): string {
   for (const [name, usage, vram, temperature] of rows) {
     content += `| ${name} | ${usage} | ${vram} | ${temperature} |\n`;
   }
-  content += `| ---- | ---- | ---- | ---- |\n`;
-  content += `| VRAM (total) |  | ${hasAllUsed && hasAllTotal ? `${(totalUsed / 1024).toFixed(1)}/${(totalVram / 1024).toFixed(1)} GB` : ''} |  |\n`;
+  if (gpu.length > 1) {
+    content += `| ---- | ---- | ---- | ---- |\n`;
+    content += `| VRAM (total) |  | ${hasAllUsed && hasAllTotal ? `${(totalUsed / 1024).toFixed(1)}/${(totalVram / 1024).toFixed(1)} GB` : ''} |  |\n`;
+  }
   return content;
 }
