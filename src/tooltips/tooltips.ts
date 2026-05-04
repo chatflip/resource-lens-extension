@@ -1,13 +1,5 @@
 import { CpuInfo, MemoryInfo, GpuInfo } from '../collectors/types';
 
-function usageTable(rows: [string, string][]): string {
-  let content = '| Name | Usage |\n|:---|---:|\n';
-  for (const [name, usage] of rows) {
-    content += `| ${name} | ${usage} |\n`;
-  }
-  return content;
-}
-
 function usageRows(rows: [string, string][]): string {
   let content = '';
   for (const [name, usage] of rows) {
