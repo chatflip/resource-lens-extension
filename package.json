@@ -63,28 +63,32 @@
     "build": "node esbuild.js",
     "watch": "node esbuild.js --watch",
     "package": "vsce package",
-    "test": "vitest run --config config/vitest.config.ts",
-    "test:integration": "vitest run --config config/vitest.integration.config.ts",
-    "test:gpu": "vitest run --config config/vitest.gpu.config.ts",
+    "test": "vitest run --config config/vitest.config.mts",
+    "test:integration": "vitest run --config config/vitest.integration.config.mts",
+    "test:gpu": "vitest run --config config/vitest.gpu.config.mts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
-    "@types/node": "^20.11.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.0.0",
     "@types/vscode": "^1.85.0",
-    "@vitest/coverage-v8": "^2.0.0",
-    "@vscode/vsce": "^3.7.1",
-    "esbuild": "^0.24.0",
-    "eslint": "^9.0.0",
-    "ovsx": "^0.10.9",
-    "prettier": "^3.0.0",
+    "@vitest/coverage-v8": "^5.1.0",
+    "@vscode/vsce": "^4.1.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.14.0",
+    "ovsx": "^1.3.0",
+    "prettier": "^3.9.10",
     "typescript": "^5.3.0",
-    "typescript-eslint": "^8.0.0",
-    "vitest": "^2.0.0"
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.0",
+    "vitest": "^5.1.0"
   },
   "pnpm": {
+    "overrides": {
+      "minimatch@^10": "^11.0.1"
+    },
     "onlyBuiltDependencies": [
       "esbuild"
     ],

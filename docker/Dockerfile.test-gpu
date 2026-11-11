@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:24-slim
 
 # Install mock nvidia-smi into PATH to simulate GPU presence
 COPY docker/mock-nvidia-smi /usr/local/bin/nvidia-smi

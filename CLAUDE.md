@@ -32,12 +32,14 @@
 | `make format`       | Prettier で整形          |
 | `make format-check` | Prettier 差分チェック    |
 | `make clean`        | dist / node_modules 削除 |
+| `make audit`        | 依存の脆弱性チェック     |
+| `make outdated`     | 依存の更新有無を確認     |
 
 ## コード品質
 
 - **ESLint**: flat config (`eslint.config.mjs`)、`typescript-eslint` recommended
 - **Prettier**: singleQuote, trailingComma (`.prettierrc`)
-- **テスト**: vitest + `@vitest/coverage-v8`（設定: `config/vitest.config.ts`）
+- **テスト**: vitest + `@vitest/coverage-v8`（設定: `config/vitest.config.mts`）
 - **CI**: GitHub Actions（lint → test w/ coverage → build）
 
 ## アーキテクチャ
