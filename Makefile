@@ -1,4 +1,4 @@
-.PHONY: install build watch package clean test test-docker test-all lint format format-check
+.PHONY: install build watch package clean test test-docker test-all lint format format-check audit outdated
 
 install:
 	pnpm install
@@ -32,5 +32,11 @@ format: install
 
 format-check: install
 	pnpm exec prettier --check .
+
+audit: install
+	pnpm audit
+
+outdated: install
+	pnpm outdated
 
 test-all: test test-docker

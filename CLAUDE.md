@@ -32,6 +32,8 @@
 | `make format`       | Prettier で整形          |
 | `make format-check` | Prettier 差分チェック    |
 | `make clean`        | dist / node_modules 削除 |
+| `make audit`        | 依存の脆弱性チェック     |
+| `make outdated`     | 依存の更新有無を確認     |
 
 ## コード品質
 
