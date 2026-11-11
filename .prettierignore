@@ -1,1 +1,3 @@
 pnpm-lock.yaml
+# Symlink to CLAUDE.md (checked out as a plain text file on Windows)
+AGENTS.md
