@@ -39,7 +39,7 @@
 
 - **ESLint**: flat config (`eslint.config.mjs`)、`typescript-eslint` recommended
 - **Prettier**: singleQuote, trailingComma (`.prettierrc`)
-- **テスト**: vitest + `@vitest/coverage-v8`（設定: `config/vitest.config.ts`）
+- **テスト**: vitest + `@vitest/coverage-v8`（設定: `config/vitest.config.mts`）
 - **CI**: GitHub Actions（lint → test w/ coverage → build）
 
 ## アーキテクチャ
